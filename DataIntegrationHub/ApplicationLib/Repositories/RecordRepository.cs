@@ -31,15 +31,15 @@ namespace ApplicationLib.Repositories
         {
             List<RecordValidationError> errors = new List<RecordValidationError>();
 
-            if (record.NodeId == null)
+            if (record.NodeId <= 0)
                 errors.Add(RecordValidationError.RequiredNodeId);
             if (String.IsNullOrEmpty(record.Channel)) 
                 errors.Add(RecordValidationError.RequiredChannel);
-            if (record.Value == null)
+            if (record.Value <= 0)
                 errors.Add(RecordValidationError.RequiredValue);
             if (record.DateCreated == null)
                 errors.Add(RecordValidationError.RequiredDateCreated);
-            if (record.DateCreatedTicks == null)
+            if (record.DateCreatedTicks <= 0)
                 errors.Add(RecordValidationError.RequiredDateCreatedTicks);
 
             if (!errors.Any())
