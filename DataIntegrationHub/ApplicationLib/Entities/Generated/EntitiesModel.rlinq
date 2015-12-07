@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DomainModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="2.0.0.0" name="DbContext" namespace="ApplicationLib" showPropertiesCompartment="true" xmlns="http://www.telerik.com/ORM">
+  <orm:orm name="DbContext" backend="mysql" xmlns:orm="http://tempuri.org/ORM">
+    <orm:namespace name="ApplicationLib" default="true">
+      <orm:class name="Record" uniqueId="f7d4fbc4-fd51-4f83-96f0-9b64905aaf12">
+        <orm:table name="record" />
+        <orm:identity>
+          <orm:key-generator name="autoinc">
+            <orm:key-generator-member property-name="IdRecord" />
+          </orm:key-generator>
+          <orm:single-field field-name="_idRecord" />
+        </orm:identity>
+        <orm:concurrency strategy="changed" />
+        <orm:field name="_idRecord" property="IdRecord" behavior="readwrite" uniqueId="4e2e9d8f-25c1-4107-8615-8b26a0cf36a1" type="System.Int32">
+          <orm:column name="IdRecord" sql-type="integer" nullable="false" length="0" scale="0" primary-key="true" backend-calculated="true" ado-type="Int32" />
+        </orm:field>
+        <orm:field name="_nodeId" property="NodeId" behavior="readwrite" uniqueId="86a6dad5-9415-44ff-a2ef-f65c39a86fde" type="System.Int32">
+          <orm:column name="NodeId" sql-type="integer" nullable="false" length="0" scale="0" ado-type="Int32" />
+        </orm:field>
+        <orm:field name="_channel" property="Channel" behavior="readwrite" uniqueId="b122412f-3456-47ad-9437-54c96692fbfb" type="System.String">
+          <orm:column name="Channel" sql-type="nvarchar" nullable="false" length="1" scale="0" ado-type="UnicodeStringVariableLength" />
+        </orm:field>
+        <orm:field name="_dateCreated" property="DateCreated" behavior="readwrite" uniqueId="ce01834b-de53-471f-b405-04bc12c6da36" type="System.DateTime">
+          <orm:column name="DateCreated" sql-type="datetime" nullable="false" length="0" scale="0" ado-type="DateTime" />
+        </orm:field>
+        <orm:field name="_dateCreatedTicks" property="DateCreatedTicks" behavior="readwrite" uniqueId="c3c704a3-aea4-43db-8355-096b1329c911" type="System.Int64">
+          <orm:column name="DateCreatedTicks" sql-type="bigint" nullable="false" length="0" scale="0" ado-type="Int64" />
+        </orm:field>
+        <orm:field name="_value" property="Value" behavior="readwrite" uniqueId="28702e30-1a7e-4da1-b88b-9a5318593b59" type="System.Single">
+          <orm:column name="Value" sql-type="float" nullable="false" length="0" scale="0" has-default-value="true" ado-type="Real" />
+        </orm:field>
+      </orm:class>
+    </orm:namespace>
+    <orm:schema schema="">
+      <orm:table name="record">
+        <orm:column name="IdRecord" sql-type="integer" nullable="false" length="0" scale="0" primary-key="true" backend-calculated="true" ado-type="Int32" />
+        <orm:column name="NodeId" sql-type="integer" nullable="false" length="0" scale="0" ado-type="Int32" />
+        <orm:column name="Channel" sql-type="nvarchar" nullable="false" length="1" scale="0" ado-type="UnicodeStringVariableLength" />
+        <orm:column name="DateCreated" sql-type="datetime" nullable="false" length="0" scale="0" ado-type="DateTime" />
+        <orm:column name="DateCreatedTicks" sql-type="bigint" nullable="false" length="0" scale="0" ado-type="Int64" />
+        <orm:column name="Value" sql-type="float" nullable="false" length="0" scale="0" has-default-value="true" ado-type="Real" />
+      </orm:table>
+    </orm:schema>
+    <orm:relational-naming-settings>
+      <orm:source-strategy>Property</orm:source-strategy>
+      <orm:remove-camel-case>False</orm:remove-camel-case>
+    </orm:relational-naming-settings>
+  </orm:orm>
+  <ModelSettings xmlns="">
+    <AppConfigConnectionPropertyName>Connection</AppConfigConnectionPropertyName>
+    <AppConfigConnectionString>server=localhost;database=is_dihub;user id=dihub;password=IdainhuS;charset=utf8</AppConfigConnectionString>
+    <NamingSettings>
+      <ClassRules>
+        <CaseMode>PascalCase</CaseMode>
+        <PluralizationMode>Singularize</PluralizationMode>
+      </ClassRules>
+      <FieldRules>
+        <AddPrefix>_</AddPrefix>
+        <CaseMode>CamelCase</CaseMode>
+      </FieldRules>
+      <PropertyRules>
+        <CaseMode>PascalCase</CaseMode>
+      </PropertyRules>
+      <NavigationPropertyRules>
+        <IsPrefixSuffixEnabled>false</IsPrefixSuffixEnabled>
+      </NavigationPropertyRules>
+    </NamingSettings>
+    <CodeGenerationSettings>
+      <MappingDefinitionType>Xml</MappingDefinitionType>
+    </CodeGenerationSettings>
+    <SchemaUpdateSettings />
+    <BackendConfigurationSettings>
+      <BackendConfiguration>
+        <Backend>MySql</Backend>
+        <ProviderName>MySql.Data.MySqlClient</ProviderName>
+      </BackendConfiguration>
+    </BackendConfigurationSettings>
+  </ModelSettings>
+  <Types>
+    <DomainClass Id="f7d4fbc4-fd51-4f83-96f0-9b64905aaf12" name="Record" namespace="ApplicationLib" showPropertiesCompartment="true" identityMechanism="DatabaseServerCalculated" concurrencyMode="Changed" showNavigationCompartment="true" showImplementationCompartment="true" identityMechanismMember="IdRecord">
+      <Property Id="4e2e9d8f-25c1-4107-8615-8b26a0cf36a1" name="IdRecord" type="Int32" label="IdRecord : Int32" kind="Persistent" identity="true" fieldName="_idRecord" />
+      <Property Id="b122412f-3456-47ad-9437-54c96692fbfb" name="Channel" label="Channel : String" kind="Persistent" fieldName="_channel" />
+      <Property Id="ce01834b-de53-471f-b405-04bc12c6da36" name="DateCreated" type="DateTime" label="DateCreated : DateTime" kind="Persistent" fieldName="_dateCreated" />
+      <Property Id="c3c704a3-aea4-43db-8355-096b1329c911" name="DateCreatedTicks" type="Int64" label="DateCreatedTicks : Int64" kind="Persistent" fieldName="_dateCreatedTicks" />
+      <Property Id="86a6dad5-9415-44ff-a2ef-f65c39a86fde" name="NodeId" type="Int32" label="NodeId : Int32" kind="Persistent" fieldName="_nodeId" />
+      <Property Id="28702e30-1a7e-4da1-b88b-9a5318593b59" name="Value" type="Single" label="Value : Single" kind="Persistent" fieldName="_value" />
+    </DomainClass>
+  </Types>
+  <domainContext>
+    <domainModelHasDomainContext Id="aaaa70e7-3ba4-4d30-a51f-7cbfee455c17">
+      <domainContainer name="DbContext" namespace="ApplicationLib" showPropertiesCompartment="true">
+        <entitySetProperty name="Records" namespace="ApplicationLib" type="Record" label="Records : IQueryable&lt;ApplicationLib.Record&gt;" />
+      </domainContainer>
+    </domainModelHasDomainContext>
+  </domainContext>
+</DomainModel>
