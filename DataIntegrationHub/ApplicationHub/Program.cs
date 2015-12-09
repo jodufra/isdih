@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ApplicationLib.Entities;
+using ApplicationLib.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Messaging;
@@ -23,19 +25,24 @@ namespace ApplicationHub
             set { lock (_threadLock) { _sensorMessageQueue = value; } }
         }
         private bool _isWorking;
-        public bool IsWorking {
+        public bool IsWorking
+        {
             get { lock (_threadLock) { return _isWorking; } }
-            set { lock (_threadLock) { _isWorking = value; } } 
+            set { lock (_threadLock) { _isWorking = value; } }
         }
 
-        private Program() { 
+        private Program()
+        {
             _threadLock = new object();
-            _sensorMessageQueue = MessageQueue.Create(".\\Private$\\newPrivQueue1");
+            //_sensorMessageQueue = MessageQueue.Create(@".\Private$\newPrivQueue1");
+
         }
 
         public void Initialize()
         {
             IsWorking = true;
+            RecordRepository recordRepository = new RecordRepository(DbContextFactory.GetContextPerRequest());
+            var errors = recordRepository.Save(new ApplicationLib.Record() { NodeId = 1, Channel = "T", Value = 21.5F, DateCreated = DateTime.Now, DateCreatedTicks = DateTime.Now.Ticks });
         }
 
 
