@@ -99,6 +99,7 @@
       <DependentUpon>EntitiesModel.rlinq</DependentUpon>
     </Compile>
     <Compile Include="Repositories\RecordRepository.cs" />
+    <Compile Include="Utilities\ExceptionReporter.cs" />
     <Compile Include="Utilities\SimplerAES.cs" />
     <Compile Include="Utilities\Dates.cs" />
     <Compile Include="Utilities\Numerics.cs" />
