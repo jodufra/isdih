@@ -32,7 +32,7 @@ namespace ApplicationHub.Models
         private Settings()
         {
             _threadLock = new object();
-            _isWorking = false;
+            _isWorking = true;
         }
     }
 }
