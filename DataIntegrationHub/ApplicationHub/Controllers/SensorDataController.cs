@@ -31,7 +31,7 @@ namespace ApplicationHub
         {
             if (!Settings.Instance.IsWorking) _sensorNode.Stop();
 
-            Console.WriteLine(RecordBuilder.BuildRecord(data).Log);
+            CommunicationHubController.Instance.OnSensorDataReceived(RecordBuilder.BuildRecord(data));
         }
 
     }

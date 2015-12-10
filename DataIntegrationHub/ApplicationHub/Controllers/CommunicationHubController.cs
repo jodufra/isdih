@@ -1,4 +1,5 @@
-﻿using ApplicationLib.Entities;
+﻿using ApplicationLib;
+using ApplicationLib.Entities;
 using ApplicationLib.Repositories;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,11 @@ namespace ApplicationHub
         private CommunicationHubController()
         {
 
+        }
+
+        public void OnSensorDataReceived(Record record)
+        {
+            Console.WriteLine(record.Log);
         }
     }
 }

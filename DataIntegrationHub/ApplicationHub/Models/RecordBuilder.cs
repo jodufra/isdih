@@ -1,6 +1,7 @@
 ﻿using ApplicationLib;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace ApplicationHub.Models
             string[] data;
             if (string.IsNullOrEmpty(record) || (data = record.Split(';')).Length != 3)
                 throw new ArgumentException();
-            return new Record() { NodeId = int.Parse(data[0]), Channel = data[1], Value = float.Parse(data[2]), DateCreated = date, DateCreatedTicks = date.Ticks };
+            return new Record() { NodeId = int.Parse(data[0]), Channel = data[1], Value = float.Parse(data[2], CultureInfo.InvariantCulture), DateCreated = date, DateCreatedTicks = date.Ticks };
         }
     }
 }

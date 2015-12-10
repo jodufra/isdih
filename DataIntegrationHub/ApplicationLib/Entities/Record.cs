@@ -8,6 +8,6 @@ namespace ApplicationLib
 {
     public partial class Record
     {
-        public string Log { get { return (new StringBuilder().Append(NodeId).Append(" - ").Append(Channel).Append(" - ").Append(Value).Append(" - ").Append(DateCreated.ToLongTimeString())).ToString(); } }
+        public string Log { get { return (new StringBuilder().Append(NodeId).Append(" - ").Append(Channel).Append(" - ").Append(Value.ToString("F")).Append(" - ").Append(DateCreated.ToLongTimeString()).Append(" - ").Append(DateCreatedTicks)).ToString(); } }
     }
 }
