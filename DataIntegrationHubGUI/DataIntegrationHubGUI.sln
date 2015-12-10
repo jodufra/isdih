@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FCEA7D41-262D-41D2-A111-406EF1A2A17B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EF3E3AF8-AA3B-4BB1-9808-949A0FBB1492}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "DataIntegrationHubGUI", "src\DataIntegrationHubGUI\DataIntegrationHubGUI.xproj", "{9BE50699-816F-4C89-83E6-EF6FC2FE6221}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9BE50699-816F-4C89-83E6-EF6FC2FE6221}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BE50699-816F-4C89-83E6-EF6FC2FE6221}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BE50699-816F-4C89-83E6-EF6FC2FE6221}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BE50699-816F-4C89-83E6-EF6FC2FE6221}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9BE50699-816F-4C89-83E6-EF6FC2FE6221} = {FCEA7D41-262D-41D2-A111-406EF1A2A17B}
+	EndGlobalSection
+EndGlobal
