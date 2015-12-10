@@ -24,5 +24,10 @@ namespace ApplicationDBPersisTence
         {
             InitializeComponent();
         }
+
+        private void btnStartStop_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
