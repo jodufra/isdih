@@ -1,4 +1,5 @@
 ﻿using ApplicationHub.Models;
+using ApplicationLib;
 using ApplicationLib.Utilities;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace ApplicationHub
     public class SensorDataController
     {
         public static SensorDataController Instance;
+
         public static SensorDataController CreateInstance()
         {
             Instance = new SensorDataController();
@@ -21,13 +23,14 @@ namespace ApplicationHub
         }
 
         private SensorNode _sensorNode;
+        
         private SensorDataController()
         {
             _sensorNode = new SensorNode();
             _sensorNode.Initialize(OnSensorDataRecieved, 250);
         }
 
-        private void OnSensorDataRecieved(string data)
+        public void OnSensorDataRecieved(string data)
         {
             if (!Settings.Instance.IsWorking) _sensorNode.Stop();
 
