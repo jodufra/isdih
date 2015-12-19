@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ApplicationLib
 {
+    [Serializable]
     public partial class Record
     {
         public string Log { get { return (new StringBuilder().Append(NodeId).Append(" - ").Append(Channel).Append(" - ").Append(Value.ToString("F")).Append(" - ").Append(DateCreated.ToLongTimeString()).Append(" - ").Append(DateCreatedTicks)).ToString(); } }

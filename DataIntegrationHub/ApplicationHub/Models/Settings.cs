@@ -22,7 +22,7 @@ namespace ApplicationHub.Models
         public string AlarmConfigQueueName { get { lock (_threadLock) { return ConfigurationManager.AppSettings["AlarmConfigQueueName"]; } } }
         public string DbPersistenceQueueName { get { lock (_threadLock) { return ConfigurationManager.AppSettings["DbPersistenceQueueName"]; } } }
 
-        private bool _isWorking;
+        public bool _isWorking;
         public bool IsWorking
         {
             get { lock (_threadLock) { return _isWorking; } }

@@ -12,9 +12,10 @@ using SensorNode = SensorNodeDll.SensorNodeDll;
 
 namespace ApplicationHub
 {
-    public class SensorDataController
+    public class SensorDataController : IDisposable
     {
         public static SensorDataController Instance;
+        private bool disposed;
 
         public static SensorDataController CreateInstance()
         {
@@ -22,21 +23,62 @@ namespace ApplicationHub
             return Instance;
         }
 
-        private SensorNode _sensorNode;
+        private SensorNode _sensorNode = null;
         
         private SensorDataController()
         {
             _sensorNode = new SensorNode();
-            _sensorNode.Initialize(OnSensorDataRecieved, 250);
+            _sensorNode.Initialize(OnSensorDataRecieved, Properties.Settings.Default.Delay);
         }
 
         public void OnSensorDataRecieved(string data)
         {
             if (!Settings.Instance.IsWorking) _sensorNode.Stop();
-
             CommunicationHubController.Instance.OnSensorDataReceived(RecordBuilder.BuildRecord(data));
         }
 
+
+        public bool StopStart()
+        {
+            if (_sensorNode != null)
+            {
+                if (Settings.Instance.IsWorking)
+                {
+                    Settings.Instance._isWorking = false;
+                    return false;
+                }
+                else
+                {
+                    _sensorNode = new SensorNode();
+                    _sensorNode.Initialize(OnSensorDataRecieved, Properties.Settings.Default.Delay);
+                    return Settings.Instance._isWorking = true;
+                }
+            }
+            return false;
+        }
+
+        public bool GetState()
+        {
+            return Settings.Instance.IsWorking;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    _sensorNode.Stop();
+                    _sensorNode = null;
+                }
+            }
+            disposed = true;
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 
 }

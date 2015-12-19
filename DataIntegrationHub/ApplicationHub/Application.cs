@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using ApplicationHub.Models;
 
 namespace ApplicationHub
 {
@@ -12,27 +13,33 @@ namespace ApplicationHub
     {
         public static void Main(string[ ] args)
         {
-            CommunicationHubController ProgramController;
+            CommunicationHubController CHController = null;
             bool Ignore = false; // Used to ignore main menu so that on settings we create a refresh effect 
             int OpMM = -1, OpSM = -1; // Opts for menus
             // Global opts
             int Delay = Properties.Settings.Default.Delay, Port = Properties.Settings.Default.Port;
             string IpAddress = Properties.Settings.Default.IpAddress;
-            bool Startup = Properties.Settings.Default.AutoStart;
- 
+            //bool Startup = Properties.Settings.Default.AutoStart;
+
             do
             {
                 if (Ignore==false)
-                    OpMM = MenuMain();
+                    OpMM = MenuMain(CHController);
                 switch (OpMM)
                 {
                     case 1:
-                        //ainda n sei bem
-                        ProgramController = CommunicationHubController.CreateInstance();
-                        
+                        if (CHController == null)
+                        {
+                            CHController = CommunicationHubController.CreateInstance();
+                        }
+                        else
+                        {
+                            if(CHController.IsSensorWorking()) CHController.StopSensor(); else CHController.StartSensor();    
+                        }
+
                         break;
                     case 2:
-                        OpSM = MenuSettings(Delay, IpAddress, Port, Startup);
+                        OpSM = MenuSettings(Delay, IpAddress, Port);
                         Ignore = false;
                         do{
                             switch (OpSM)
@@ -51,6 +58,11 @@ namespace ApplicationHub
                                     Properties.Settings.Default.Delay = Delay;
                                     Properties.Settings.Default.Save();
 
+                                    if (CHController != null && CHController.IsSensorWorking())
+                                    {
+                                        CHController.SensorReset();
+                                    }
+
                                     Ignore = true;
                                     OpSM = 0;
                                     break;
@@ -68,6 +80,9 @@ namespace ApplicationHub
                                     //Save Setting
                                     Properties.Settings.Default.IpAddress = TempIp;
                                     Properties.Settings.Default.Save();
+
+                                    if (CHController != null)
+                                        CHController.ResetPublisher();
                                     
                                     IpAddress = TempIp;
                                     Ignore = true;
@@ -86,10 +101,13 @@ namespace ApplicationHub
                                     Properties.Settings.Default.Port = Port;
                                     Properties.Settings.Default.Save();
 
+                                    if (CHController != null)
+                                        CHController.ResetPublisher();
+
                                     Ignore = true;
                                     OpSM = 0;
                                     break;
-                                case 4:
+                                /*case 4:
                                     string temp;
                                     do
                                     {
@@ -106,23 +124,27 @@ namespace ApplicationHub
 
                                     Ignore = true;
                                     OpSM = 0;
-                                    break;
+                                    break;*/
 
                             }
                         } while (OpSM != 0);
+                        
                         break;
                 }
-            } while (OpMM != 0);   
+            } while (OpMM != 0);
+
+            Environment.Exit(0); // To kill all thread in background correctly
         }
 
-        public static int MenuMain()
+        public static int MenuMain(CommunicationHubController CHController)
         {
             int op;
             do
             {
+                
                 Console.Clear();
                 Console.WriteLine("------------- Hub App -------------");
-                Console.WriteLine("[1] Start Recoding Sensor Data");
+                Console.WriteLine("[1] " + (CHController == null ? "Start" : (CHController.IsSensorWorking() ? "Stop" : "Start")) + " Hub Data Recoding");
                 Console.WriteLine("[2] Settings");
                 Console.WriteLine("[0] Terminate");
                 Int32.TryParse(Console.ReadLine(), out op);
@@ -131,7 +153,7 @@ namespace ApplicationHub
             return op;
         }
 
-        private static int MenuSettings(int Delay, string Ip, int Port, bool Startup)
+        private static int MenuSettings(int Delay, string Ip, int Port)
         {
             int op;
             do
@@ -141,10 +163,10 @@ namespace ApplicationHub
                 Console.WriteLine("[1] Set Delay: " + (Delay == 0 ? "<Not Defined>" : Delay.ToString()));
                 Console.WriteLine("[2] Set Ip Address: " + (string.IsNullOrEmpty(Ip) ? "<Not Defined>" : Ip));
                 Console.WriteLine("[3] Set Port: " + (Port == 0 ? "<Not Defined>" : Port.ToString()));
-                Console.WriteLine("[4] Set Auto Start On Startup: " + (Startup.Equals(' ') ? "<Not Defined>" : ((Startup) ? "Yes" : "No")));
+                //Console.WriteLine("[4] Set Auto Start On Startup: " + (Startup.Equals(' ') ? "<Not Defined>" : ((Startup) ? "Yes" : "No")));
                 Console.WriteLine("[0] exit");
                 Int32.TryParse(Console.ReadLine(), out op);
-            } while (op != 1 && op != 2 && op != 3 && op != 4 && op != 0);
+            } while (op != 1 && op != 2 && op != 3 && /*op != 4 &&*/ op != 0);
 
             return op;
         }
