@@ -1,0 +1,31 @@
+﻿<Window x:Class="ApplicationAlarmSystem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Alarms System" Height="315.333" Width="552.334">
+    <Grid>
+        <Label Content="Channel:" HorizontalAlignment="Left" Margin="324,24,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="comboBoxChannel" HorizontalAlignment="Left" Margin="385,24,0,0" VerticalAlignment="Top" Width="120" SelectedValuePath="Content">
+            <ComboBoxItem Content="H"/>
+            <ComboBoxItem Content="P"/>
+            <ComboBoxItem Content="T"/>
+        </ComboBox>
+        <Label Content="Minimum:" HorizontalAlignment="Left" Margin="317,55,0,0" VerticalAlignment="Top"/>
+        <Label Content="Maximum:" HorizontalAlignment="Left" Margin="315,86,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtMin" HorizontalAlignment="Left" Height="23" Margin="385,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="txtMax" HorizontalAlignment="Left" Height="23" Margin="385,86,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Button Content="Update" HorizontalAlignment="Left" Margin="324,133,0,0" VerticalAlignment="Top" Width="56" Click="Button_Click"/>
+        <Button Content="Cancel" HorizontalAlignment="Left" Margin="446,133,0,0" VerticalAlignment="Top" Width="56"/>
+        <ListView x:Name="alarmsRules" HorizontalAlignment="Left" Height="100" Margin="21,24,0,0" VerticalAlignment="Top" Width="289" Cursor="No" PreviewMouseDoubleClick="alarmsRules_PreviewMouseDoubleClick">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Channel" Width="70" DisplayMemberBinding="{Binding Channel}"/>
+                    <GridViewColumn Header="Min" Width="50" DisplayMemberBinding="{Binding Min}"/>
+                    <GridViewColumn Header="Max" Width="50" DisplayMemberBinding="{Binding Max}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button x:Name="btnXML" Content="Open XML" HorizontalAlignment="Left" Margin="21,133,0,0" VerticalAlignment="Top" Width="75" Click="btnXML_Click"/>
+        <Button Content="Delete" HorizontalAlignment="Left" Margin="385,133,0,0" VerticalAlignment="Top" Width="56" RenderTransformOrigin="0.16,0.6" Click="Button_Click_1"/>
+
+    </Grid>
+</Window>
