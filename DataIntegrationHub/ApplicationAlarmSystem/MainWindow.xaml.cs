@@ -18,6 +18,10 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Linq;
 using Microsoft.Win32;
+using ZeroMQ;
+using System.Windows.Threading;
+using ApplicationLib;
+using System.Xml.Serialization;
 
 namespace ApplicationAlarmSystem
 {
@@ -26,8 +30,9 @@ namespace ApplicationAlarmSystem
     /// </summary>
     public partial class MainWindow : Window
     {
-        MyXmlHandler myxml = new MyXmlHandler("c:\\temp\\alarmsRules.xml","c:\\temp\\alarmsRules.xsd");
-
+        private MyXmlHandler myxml = new MyXmlHandler("c:\\temp\\alarmsRules.xml","c:\\temp\\alarmsRules.xsd");
+        private ZContext context;
+        private ZSocket subscriber;
 
         public MainWindow()
         {
@@ -41,6 +46,8 @@ namespace ApplicationAlarmSystem
                 myxml.CreateXML();
                 //updateListView();
             }
+
+
         }
 
         
@@ -126,5 +133,40 @@ namespace ApplicationAlarmSystem
             updateListView();
         }
 
+        private void starStopBtn_Click(object sender, RoutedEventArgs e)
+        {
+            context = new ZContext();
+            subscriber = new ZSocket(context, ZSocketType.SUB);
+
+            subscriber.Connect("tcp://" + Properties.Settings.Default.IpAddress + ":" + Properties.Settings.Default.Port.ToString());
+
+            subscriber.SubscribeAll();
+
+            starStopBtn.Content = "Stop";
+
+            while (true)
+            {
+                var frame = subscriber.ReceiveFrame();
+                //Console.WriteLine(frame.ReadString());
+                
+                //XmlDocument doc1 = new XmlDocument();
+                //doc1.Load(frame.ReadString());
+                //XmlNode _channelExist = doc1.no("channel");
+                
+                XmlSerializer serializer = new XmlSerializer(typeof(Record));
+                Record record =(Record) serializer.Deserialize(new StringReader(frame.ReadString()));
+                Console.WriteLine("channel: " + record.Channel + " -> " + record.Value);
+                
+
+
+            }
+
+        }
+        public object ExitFrame(object f)
+        {
+            ((DispatcherFrame)f).Continue = false;
+
+            return null;
+        }
     }
 }

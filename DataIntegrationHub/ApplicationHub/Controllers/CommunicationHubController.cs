@@ -97,7 +97,7 @@ namespace ApplicationHub
                 SWriter.Close();
                 SWriter.Dispose();
 
-                //Console.WriteLine(XmlString);
+                Console.WriteLine(XmlString);
                 //Console.WriteLine("Receibed from sensor: " + record.Log);
             }
         }
