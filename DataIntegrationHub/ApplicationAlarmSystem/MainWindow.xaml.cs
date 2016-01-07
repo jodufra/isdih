@@ -39,6 +39,7 @@ namespace ApplicationAlarmSystem
             {
                 MessageBox.Show("O ficheiro xml Não é válido! O ficheiro XML foi criado!");
                 myxml.CreateXML();
+                //updateListView();
             }
         }
 
@@ -51,8 +52,12 @@ namespace ApplicationAlarmSystem
             {
                 List<Rule> items = new List<Rule>();
                 var ruls = from c in XElement.Load("c:\\temp\\alarmsRules.xml").Elements("Rule") select c;
+                
                 foreach (var rules in ruls)
                 {
+
+                    
+                  
                     Rule lRule = new Rule
                     {
                         Channel = rules.Element("channel").Value,
@@ -61,6 +66,7 @@ namespace ApplicationAlarmSystem
                     };
                     items.Add(lRule);
                     //Console.WriteLine(items[0].Channel);
+                    
                 }
                
                 return items;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,12 +37,16 @@ namespace ApplicationAlarmSystem
             doc.AppendChild(root);
 
             //Create Rules
-            XmlElement rule = doc.CreateElement("Rule");    
-            rule.SetAttribute("type", "T");
-            rule.SetAttribute("min", "0");
-            rule.SetAttribute("max", "20");
+            //XmlElement rule = doc.CreateElement("Rule");
+            //rule.SetAttributeNode("2");
+            //doc.CreateElement(".CreateNavigator("type", "T");
+            //rule.SetAttribute("min", "0");
+            //rule.SetAttribute("max", "20");
 
-            root.AppendChild(rule);
+            //root.AppendChild(rule);
+
+            
+            
 
             doc.Save("c:\\temp\\alarmsRules.xml");
         }
@@ -102,7 +107,14 @@ namespace ApplicationAlarmSystem
         public bool validateXml()
         {
             _isvalid = true;
+
+            if (!File.Exists(_xmlfilepath))
+            {
+                FileStream Fs = new FileStream(_xmlfilepath, FileMode.CreateNew);
+            }
+
             XmlDocument doc = new XmlDocument();
+            
             try
             {
                 doc.Load(_xmlfilepath);
