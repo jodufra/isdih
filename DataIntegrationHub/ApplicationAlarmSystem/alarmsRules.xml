@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Rules>
+  <Rule>
+    <channel>H</channel>
+    <min>0</min>
+    <max>0</max>
+  </Rule>
+</Rules>
