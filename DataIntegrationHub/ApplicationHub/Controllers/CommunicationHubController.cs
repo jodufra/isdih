@@ -56,7 +56,7 @@ namespace ApplicationHub
 
                 var ZFrame = new ZFrame(XmlString); // Create a frame of the Xml
                 PublisherSocket.Send(ZFrame); //Send the Xml to subs
-
+               
                 //Console.WriteLine(XmlString); //Debug
                 //Console.WriteLine("Receibed from sensor: " + record.Log);
                 XmlWriter.Close();

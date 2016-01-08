@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationLib", "ApplicationLib\ApplicationLib.csproj", "{D7C32A09-DD50-499F-B10D-BF261BBB245C}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationDBPersisTence", "ApplicationDBPersisTence\ApplicationDBPersisTence.csproj", "{418AAC00-0663-44D8-9946-B7F5E5350492}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationAlarmSystem", "ApplicationAlarmSystem\ApplicationAlarmSystem.csproj", "{FC7700BF-FE24-4161-9EF7-E30959B4EE33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationDbLibrary", "ApplicationDbLibrary\ApplicationDbLibrary.csproj", "{AA6AFE75-602D-4BFD-95AB-20D58466CE5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,14 +35,18 @@ Global
 		{FC7700BF-FE24-4161-9EF7-E30959B4EE33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC7700BF-FE24-4161-9EF7-E30959B4EE33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC7700BF-FE24-4161-9EF7-E30959B4EE33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA6AFE75-602D-4BFD-95AB-20D58466CE5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA6AFE75-602D-4BFD-95AB-20D58466CE5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA6AFE75-602D-4BFD-95AB-20D58466CE5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA6AFE75-602D-4BFD-95AB-20D58466CE5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		VersionFieldUsingAttrib = True
-		FetchGroupUsingAttrib = True
-		IndexUsingAttrib = False
 		ShowOldMenu = False
+		IndexUsingAttrib = False
+		FetchGroupUsingAttrib = True
+		VersionFieldUsingAttrib = True
 	EndGlobalSection
 EndGlobal

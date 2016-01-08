@@ -23,6 +23,8 @@ using System.Windows.Threading;
 using ApplicationLib;
 using System.Xml.Serialization;
 using ApplicationLib.Entities;
+using System.Data;
+using System.Threading;
 
 namespace ApplicationAlarmSystem
 {
@@ -31,13 +33,17 @@ namespace ApplicationAlarmSystem
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static string START = "Start";
+        private static string STOP = "Stop";
         private MyXmlHandler myxml = new MyXmlHandler(@"alarmsRules.xml",@"alarmsRules.xsd");
-        private ZContext context;
-        private ZSocket subscriber;
+        Thread thread;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            addressBtn.Text = Properties.Settings.Default.IpAddress;
+            portBtn.Text = Properties.Settings.Default.Port.ToString();
             
             if (myxml.validateXml())
                 updateListView();
@@ -47,11 +53,7 @@ namespace ApplicationAlarmSystem
                 myxml.CreateXML();
                 //updateListView();
             }
-
-
         }
-
-        
 
         class DAL_OCUSMA
         {
@@ -138,37 +140,55 @@ namespace ApplicationAlarmSystem
 
         private void starStopBtn_Click(object sender, RoutedEventArgs e)
         {
-            context = new ZContext();
-            subscriber = new ZSocket(context, ZSocketType.SUB);
+            if (thread == null)
+            {
+                starStopBtn.Content = STOP;
+                disableHubConnSetts(false);
+                ThreadStart ts = new ThreadStart(SubscribeAndConsume);
+                thread = new Thread(ts);
+                thread.Start();
+            }
+            else
+            {
+                starStopBtn.Content = START;
+                disableHubConnSetts(true);
+                thread.Abort();
+            }
+        }
 
+        private void disableHubConnSetts(bool action)
+        {
+            saveBtn.IsEnabled = action;
+            addressBtn.IsEnabled = action;
+            portBtn.IsEnabled = action;
+        }
+
+        private void SubscribeAndConsume()
+        {
+            ZContext context = new ZContext();
+            ZSocket subscriber = new ZSocket(context, ZSocketType.SUB);
             subscriber.Connect("tcp://" + Properties.Settings.Default.IpAddress + ":" + Properties.Settings.Default.Port.ToString());
-
             subscriber.SubscribeAll();
-
-            starStopBtn.Content = "Stop";
-
+            
             while (true)
             {
                 var frame = subscriber.ReceiveFrame();
+
                 //Console.WriteLine(frame.ReadString());
-                
                 //XmlDocument doc1 = new XmlDocument();
                 //doc1.Load(frame.ReadString());
                 //XmlNode _channelExist = doc1.no("channel");
-                
+
                 XmlSerializer serializer = new XmlSerializer(typeof(Record));
-                Record record =(Record) serializer.Deserialize(new StringReader(frame.ReadString()));
+                Record record = (Record)serializer.Deserialize(new StringReader(frame.ReadString()));
                 Console.WriteLine("channel: " + record.Channel + " -> " + record.Value);
+                //subscriber.Send(new ZFrame("asd"));
 
-                var lol = ((DataRowView)((ListView)sender).SelectedItem)["cislo_bytu"].ToString();
-                Console.WriteLine(lol);
-                
-                
-
-
+                //var lol = ((DataRowView)((ListView)sender).SelectedItem)["cislo_bytu"].ToString();
+                //Console.WriteLine(lol);
             }
-
         }
+
         public object ExitFrame(object f)
         {
             ((DispatcherFrame)f).Continue = false;
@@ -181,7 +201,6 @@ namespace ApplicationAlarmSystem
             if (!char.IsDigit(e.Text, e.Text.Length - 1))
             {
                 e.Handled = true;
-
             }
         }
 
