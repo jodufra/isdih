@@ -48,7 +48,7 @@ namespace ApplicationAlarmSystem
             
             
 
-            doc.Save("c:\\temp\\alarmsRules.xml");
+            doc.Save(@"alarmsRules.xml");
         }
         public void deleteRules(string channel)
         {

@@ -22,6 +22,7 @@ using ZeroMQ;
 using System.Windows.Threading;
 using ApplicationLib;
 using System.Xml.Serialization;
+using System.Data;
 
 namespace ApplicationAlarmSystem
 {
@@ -30,7 +31,7 @@ namespace ApplicationAlarmSystem
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MyXmlHandler myxml = new MyXmlHandler("c:\\temp\\alarmsRules.xml","c:\\temp\\alarmsRules.xsd");
+        private MyXmlHandler myxml = new MyXmlHandler(@"alarmsRules.xml",@"alarmsRules.xsd");
         private ZContext context;
         private ZSocket subscriber;
 
@@ -58,13 +59,10 @@ namespace ApplicationAlarmSystem
             public static List<Rule> LoadOCUSMA()
             {
                 List<Rule> items = new List<Rule>();
-                var ruls = from c in XElement.Load("c:\\temp\\alarmsRules.xml").Elements("Rule") select c;
+                var ruls = from c in XElement.Load("alarmsRules.xml").Elements("Rule") select c;
                 
                 foreach (var rules in ruls)
-                {
-
-                    
-                  
+                {                  
                     Rule lRule = new Rule
                     {
                         Channel = rules.Element("channel").Value,
@@ -116,15 +114,20 @@ namespace ApplicationAlarmSystem
 
         private void btnXML_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("c:\\temp\\alarmsRules.xml");
+            System.Diagnostics.Process.Start(@"alarmsRules.xml");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //myxml.CreateXML();
+
+            if (String.IsNullOrEmpty(txtMin.Text) || String.IsNullOrEmpty(txtMax.Text) || string.IsNullOrEmpty(comboBoxChannel.Text))
+            {
+                MessageBox.Show("Por favor preenche.");               
+            }
+            else {           
             myxml.updateRules(comboBoxChannel.SelectedValue.ToString(), int.Parse(txtMin.Text), int.Parse(txtMax.Text));
             updateListView();
-           
+            }
         }  
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -156,6 +159,10 @@ namespace ApplicationAlarmSystem
                 XmlSerializer serializer = new XmlSerializer(typeof(Record));
                 Record record =(Record) serializer.Deserialize(new StringReader(frame.ReadString()));
                 Console.WriteLine("channel: " + record.Channel + " -> " + record.Value);
+
+                var lol = ((DataRowView)((ListView)sender).SelectedItem)["cislo_bytu"].ToString();
+                Console.WriteLine(lol);
+                
                 
 
 
@@ -167,6 +174,24 @@ namespace ApplicationAlarmSystem
             ((DispatcherFrame)f).Continue = false;
 
             return null;
+        }
+
+        private void txtMin_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+            {
+                e.Handled = true;
+
+            }
+        }
+
+        private void txtMax_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+            {
+                e.Handled = true;
+
+            }
         }
     }
 }

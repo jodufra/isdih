@@ -11,8 +11,8 @@
         </ComboBox>
         <Label Content="Minimum:" HorizontalAlignment="Left" Margin="317,55,0,0" VerticalAlignment="Top"/>
         <Label Content="Maximum:" HorizontalAlignment="Left" Margin="315,86,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtMin" HorizontalAlignment="Left" Height="23" Margin="385,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="txtMax" HorizontalAlignment="Left" Height="23" Margin="385,86,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="txtMin" HorizontalAlignment="Left" Height="23" Margin="385,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" PreviewTextInput="txtMin_PreviewTextInput"/>
+        <TextBox x:Name="txtMax" HorizontalAlignment="Left" Height="23" Margin="385,86,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" PreviewTextInput="txtMax_PreviewTextInput"/>
         <Button Content="Update" HorizontalAlignment="Left" Margin="324,133,0,0" VerticalAlignment="Top" Width="56" Click="Button_Click"/>
         <Button Content="Cancel" HorizontalAlignment="Left" Margin="446,133,0,0" VerticalAlignment="Top" Width="56"/>
         <ListView x:Name="alarmsRules" HorizontalAlignment="Left" Height="100" Margin="21,24,0,0" VerticalAlignment="Top" Width="289" Cursor="No" PreviewMouseDoubleClick="alarmsRules_PreviewMouseDoubleClick">
