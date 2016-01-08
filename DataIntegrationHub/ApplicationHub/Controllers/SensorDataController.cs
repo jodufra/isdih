@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Messaging;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using SensorNode = SensorNodeDll.SensorNodeDll;
 
@@ -33,7 +34,11 @@ namespace ApplicationHub
 
         public void OnSensorDataRecieved(string data)
         {
-            if (!Settings.Instance.IsWorking) _sensorNode.Stop();
+            if (!Settings.Instance.IsWorking)
+            {
+                _sensorNode.Stop();
+                return;
+            }
             CommunicationHubController.Instance.OnSensorDataReceived(RecordBuilder.BuildRecord(data));
         }
 
@@ -44,14 +49,15 @@ namespace ApplicationHub
             {
                 if (Settings.Instance.IsWorking)
                 {
-                    Settings.Instance._isWorking = false;
+                    Settings.Instance.IsWorking = false;
                     return false;
                 }
                 else
                 {
                     _sensorNode = new SensorNode();
                     _sensorNode.Initialize(OnSensorDataRecieved, Properties.Settings.Default.Delay);
-                    return Settings.Instance._isWorking = true;
+                    Settings.Instance.IsWorking = true;
+                    return true;
                 }
             }
             return false;

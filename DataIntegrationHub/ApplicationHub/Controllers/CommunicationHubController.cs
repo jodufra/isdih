@@ -1,6 +1,5 @@
 ﻿using ApplicationLib;
 using ApplicationLib.Entities;
-using ApplicationLib.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -22,10 +21,10 @@ namespace ApplicationHub
         private ZContext Context;
         private ZSocket PublisherSocket;
         private SensorDataController SDataCollector;
-        private XmlDocument Doc;
-        private String XmlName;
-        private String CurrentDate;
-        private XmlElement Root;
+        //private XmlDocument Doc;
+        //private String XmlName;
+        //private String CurrentDate;
+        //private XmlElement Root;
         private bool Disposed;
 
 
@@ -36,26 +35,9 @@ namespace ApplicationHub
         }
 
         private CommunicationHubController()
-        {
+        { 
             CreatePublisher();
             SDataCollector = SensorDataController.CreateInstance();
-
-            CurrentDate = DateTime.Now.ToString("dd-MM-yy");
-            XmlName = "DataHub_" + CurrentDate + ".xml";
-
-            if (!File.Exists(@XmlName))
-            {
-                XmlDocCreate();
-            }
-            else
-            {
-                XmlDocRead();
-            }
-
-            
-            //Apanhar os dados do sensor
-            //estar a enviar para os subscribers
-            //criar um ficheiro novo cada dia com os dados
         }
 
         public void OnSensorDataReceived(Record record)
@@ -72,33 +54,15 @@ namespace ApplicationHub
                 Serializer.Serialize(SWriter, RecordToSend, Ns);
                 var XmlString = SWriter.ToString(); // Record To XML
 
-                var _ZFrame = new ZFrame(XmlString); // Create a frame of the Xml
-                PublisherSocket.Send(_ZFrame); //Send the Xml to subs
+                var ZFrame = new ZFrame(XmlString); // Create a frame of the Xml
+                PublisherSocket.Send(ZFrame); //Send the Xml to subs
 
-                //Save to Xml File Daily
-                if(Doc != null){
-                    XmlElement NewRecord = Doc.CreateElement("Record");
-                    NewRecord.SetAttribute("IdRecord", record.IdRecord.ToString());
-                    NewRecord.SetAttribute("NodeId", record.NodeId.ToString());
-                    NewRecord.SetAttribute("Channel", record.Channel.ToString());
-                    NewRecord.SetAttribute("DateCreated", record.DateCreated.ToString());
-                    NewRecord.SetAttribute("DateCreatedTicks", record.DateCreatedTicks.ToString());
-                    NewRecord.SetAttribute("Value", record.Value.ToString());
-                    //Root.AppendChild(NewRecord);
-                    Doc.Save(@XmlName);
-                }
-                
-
-                //Clear Mem ??
-                _ZFrame.Close();
-                _ZFrame.Dispose();
+                //Console.WriteLine(XmlString); //Debug
+                //Console.WriteLine("Receibed from sensor: " + record.Log);
                 XmlWriter.Close();
                 XmlWriter.Dispose();
                 SWriter.Close();
                 SWriter.Dispose();
-
-                //Console.WriteLine(XmlString);
-                //Console.WriteLine("Receibed from sensor: " + record.Log);
             }
         }
 
@@ -126,13 +90,10 @@ namespace ApplicationHub
 
         protected void CreatePublisher()
         {
-            /*if(Context != null){
-                Context.Dispose();
-                PublisherSocket.Dispose();
-            }*/
             Context = new ZContext();
             PublisherSocket = new ZSocket(Context, ZSocketType.PUB);
             PublisherSocket.Bind("tcp://" + Properties.Settings.Default.IpAddress + ":" + Properties.Settings.Default.Port);
+            
         }
 
         public void ResetPublisher()
@@ -140,38 +101,6 @@ namespace ApplicationHub
             CreatePublisher();
         }
 
-        private void XmlDocCreate()
-        {
-            try
-            {
-                Doc = new XmlDocument();
-                XmlDeclaration dec = Doc.CreateXmlDeclaration("1.0", "utf-16", null);
-                Doc.AppendChild(dec);
-                Root = Doc.CreateElement("Records");
-                Doc.AppendChild(Root);
-            }
-            catch (Exception)
-            {
-                Doc = null;
-            }
-          
-        }
-
-        private void XmlDocRead()
-        {
-            try
-            {
-                Doc = new XmlDocument();
-                Doc.Load(@XmlName);
-              
-            }
-            catch
-            {
-                Doc = null;
-            }
-        }
-
-        //--
         protected virtual void Dispose(bool Disposing)
         {
             if (!Disposed)
@@ -181,7 +110,15 @@ namespace ApplicationHub
                     Context.Dispose();
                     PublisherSocket.Dispose();
                     SDataCollector.Dispose();
+
+                   /*_ZFrame.Close();
+                   _ZFrame.Dispose();
+                   XmlWriter.Close();
+                   XmlWriter.Dispose();
+                   SWriter.Close();
+                   SWriter.Dispose();*/
                 }
+
             }
             Disposed = true;
         }

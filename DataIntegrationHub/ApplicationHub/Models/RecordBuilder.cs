@@ -1,4 +1,5 @@
 ﻿using ApplicationLib;
+using ApplicationLib.Entities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
