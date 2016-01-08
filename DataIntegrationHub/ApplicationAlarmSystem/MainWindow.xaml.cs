@@ -22,7 +22,7 @@ using ZeroMQ;
 using System.Windows.Threading;
 using ApplicationLib;
 using System.Xml.Serialization;
-using System.Data;
+using ApplicationLib.Entities;
 
 namespace ApplicationAlarmSystem
 {

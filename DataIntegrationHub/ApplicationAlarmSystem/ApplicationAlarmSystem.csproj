@@ -48,7 +48,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="ZeroMQ">
-      <HintPath>..\..\..\..\ZeroMQ.dll</HintPath>
+      <HintPath>..\..\..\..\..\Google Drive\Eng. Inf\IS\Prática\Ficha_6\ZeroMQ\ZeroMQ.Release\bin\Release\ZeroMQ.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

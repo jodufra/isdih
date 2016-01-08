@@ -1,6 +1,5 @@
 ﻿using ApplicationLib;
 using ApplicationLib.Entities;
-using ApplicationLib.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -22,10 +21,10 @@ namespace ApplicationHub
         private ZContext Context;
         private ZSocket PublisherSocket;
         private SensorDataController SDataCollector;
-        private XmlDocument Doc;
-        private String XmlName;
-        private String CurrentDate;
-        private XmlElement Root;
+        //private XmlDocument Doc;
+        //private String XmlName;
+        //private String CurrentDate;
+        //private XmlElement Root;
         private bool Disposed;
 
 
