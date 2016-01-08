@@ -121,8 +121,8 @@ namespace ApplicationAlarmSystem
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
-            if (String.IsNullOrEmpty(txtMin.Text) || String.IsNullOrEmpty(txtMax.Text) || string.IsNullOrEmpty(comboBoxChannel.Text))
+            int verify;
+            if (String.IsNullOrEmpty(txtMin.Text) || String.IsNullOrEmpty(txtMax.Text) || string.IsNullOrEmpty(comboBoxChannel.Text) || !int.TryParse(txtMin.Text, out verify) || !int.TryParse(txtMax.Text, out verify))
             {
                 MessageBox.Show("Por favor preenche.");               
             }
