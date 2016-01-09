@@ -213,11 +213,11 @@ namespace ApplicationAlarmSystem
                     if (listas[i].Channel.Contains(record.Channel))
                         if (listas[i].Min>record.Value||record.Value>listas[i].Max)
                         {
-                            Console.WriteLine("ALERRRTA! " + listas[i].Min + " - " + listas[i].Max + " : " + record.Value);
+                            Console.WriteLine("Alerta canal:"+ listas[i].Channel + ":"+ listas[i].Min + "-" + listas[i].Max + "  Value:" + record.Value);
                         }
                         else
                         {
-                            Console.WriteLine("OK!");
+                            Console.WriteLine("Canal:"+listas[i].Channel+"OK!");
                         }
                 }
                     
