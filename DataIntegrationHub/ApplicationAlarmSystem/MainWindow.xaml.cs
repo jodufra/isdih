@@ -36,11 +36,17 @@ namespace ApplicationAlarmSystem
         private static string START = "Start";
         private static string STOP = "Stop";
         private MyXmlHandler myxml = new MyXmlHandler(@"alarmsRules.xml",@"alarmsRules.xsd");
+        private List<Rule> listas = new List<Rule>();
         Thread thread;
-
+        
+         
         public MainWindow()
         {
             InitializeComponent();
+            btnUpdate.IsEnabled = false;
+            btnDelete.IsEnabled = false;
+            btnCancel.IsEnabled = false;
+            
 
             addressBtn.Text = Properties.Settings.Default.IpAddress;
             portBtn.Text = Properties.Settings.Default.Port.ToString();
@@ -51,31 +57,28 @@ namespace ApplicationAlarmSystem
             {
                 MessageBox.Show("O ficheiro xml Não é válido! O ficheiro XML foi criado!");
                 myxml.CreateXML();
-                //updateListView();
+                
             }
         }
-
+        
         class DAL_OCUSMA
         {
-       
+        
             public static List<Rule> LoadOCUSMA()
             {
                 List<Rule> items = new List<Rule>();
                 var ruls = from c in XElement.Load("alarmsRules.xml").Elements("Rule") select c;
                 
                 foreach (var rules in ruls)
-                {                  
+                {                 
                     Rule lRule = new Rule
                     {
                         Channel = rules.Element("channel").Value,
                         Min = int.Parse(rules.Element("min").Value),
-                        Max = int.Parse(rules.Element("max").Value)                     
+                        Max = int.Parse(rules.Element("max").Value)  
                     };
-                    items.Add(lRule);
-                    //Console.WriteLine(items[0].Channel);
-                    
-                }
-               
+                    items.Add(lRule);                   
+                }          
                 return items;
             }
 
@@ -99,6 +102,10 @@ namespace ApplicationAlarmSystem
             txtMax.Text = Convert.ToString(selectedItem.Max);
             txtMin.Text = Convert.ToString(selectedItem.Min);
             //MessageBox.Show(selectedItem.Channel);
+            btnUpdate.IsEnabled = true;
+            btnDelete.IsEnabled = true;
+            btnCancel.IsEnabled = true;
+
         }
 
 
@@ -109,7 +116,9 @@ namespace ApplicationAlarmSystem
             //Carrega as lista para a listView
             List<Rule> RuleList = new List<Rule>();
             RuleList = DAL_OCUSMA.LoadOCUSMA();
+            listas = RuleList;
             alarmsRules.ItemsSource = RuleList;
+
         }
 
        
@@ -121,14 +130,19 @@ namespace ApplicationAlarmSystem
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            int verify;
-            if (String.IsNullOrEmpty(txtMin.Text) || String.IsNullOrEmpty(txtMax.Text) || string.IsNullOrEmpty(comboBoxChannel.Text) || !int.TryParse(txtMin.Text, out verify) || !int.TryParse(txtMax.Text, out verify))
+            if (String.IsNullOrEmpty(txtMin.Text) || String.IsNullOrEmpty(txtMax.Text) || string.IsNullOrEmpty(comboBoxChannel.Text))
             {
                 MessageBox.Show("Por favor preenche.");               
             }
             else {           
             myxml.updateRules(comboBoxChannel.SelectedValue.ToString(), int.Parse(txtMin.Text), int.Parse(txtMax.Text));
             updateListView();
+            comboBoxChannel.SelectedValue = null;
+            txtMax.Text = "";
+            txtMin.Text = "";
+            btnUpdate.IsEnabled = false;
+            btnDelete.IsEnabled = false;
+            btnCancel.IsEnabled = false;
             }
         }  
 
@@ -136,10 +150,17 @@ namespace ApplicationAlarmSystem
         {
             myxml.deleteRules(comboBoxChannel.SelectedValue.ToString());
             updateListView();
+            comboBoxChannel.SelectedValue = null;
+            txtMax.Text = "";
+            txtMin.Text = "";
+            btnUpdate.IsEnabled = false;
+            btnDelete.IsEnabled = false;
+            btnCancel.IsEnabled = false;
         }
 
         private void starStopBtn_Click(object sender, RoutedEventArgs e)
         {
+            
             if (thread == null)
             {
                 starStopBtn.Content = STOP;
@@ -181,11 +202,26 @@ namespace ApplicationAlarmSystem
 
                 XmlSerializer serializer = new XmlSerializer(typeof(Record));
                 Record record = (Record)serializer.Deserialize(new StringReader(frame.ReadString()));
-                Console.WriteLine("channel: " + record.Channel + " -> " + record.Value);
+                //Console.WriteLine("channel: " + record.Channel + " -> " + record.Value);
                 //subscriber.Send(new ZFrame("asd"));
 
                 //var lol = ((DataRowView)((ListView)sender).SelectedItem)["cislo_bytu"].ToString();
                 //Console.WriteLine(lol);
+
+                for (int i = 0; i < listas.Count(); i++)
+                {
+                    if (listas[i].Channel.Contains(record.Channel))
+                        if (listas[i].Min>record.Value||record.Value>listas[i].Max)
+                        {
+                            Console.WriteLine("ALERRRTA! " + listas[i].Min + " - " + listas[i].Max + " : " + record.Value);
+                        }
+                        else
+                        {
+                            Console.WriteLine("OK!");
+                        }
+                }
+                    
+                
             }
         }
 
@@ -196,14 +232,16 @@ namespace ApplicationAlarmSystem
             return null;
         }
 
+        //verify if the digit isn't a integer
         private void txtMin_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+            if (!char.IsDigit(e.Text, e.Text.Length - 1) )
             {
                 e.Handled = true;
             }
         }
 
+        
         private void txtMax_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             if (!char.IsDigit(e.Text, e.Text.Length - 1))
@@ -211,6 +249,37 @@ namespace ApplicationAlarmSystem
                 e.Handled = true;
 
             }
+        }
+
+        //restrict the copy+cut+paste
+        private void HandleCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+
+            if (e.Command == ApplicationCommands.Cut ||
+                 e.Command == ApplicationCommands.Copy ||
+                 e.Command == ApplicationCommands.Paste)
+            {
+                e.CanExecute = false;
+                e.Handled = true;
+            }
+
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            comboBoxChannel.SelectedValue = null;
+            txtMax.Text = "";
+            txtMin.Text = "";
+            btnUpdate.IsEnabled = false;
+            btnDelete.IsEnabled = false;
+            btnCancel.IsEnabled = false;
+        }
+
+        private void comboBoxChannel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            btnUpdate.IsEnabled = true;
+            btnDelete.IsEnabled = true;
+            btnCancel.IsEnabled = true;
         }
     }
 }
