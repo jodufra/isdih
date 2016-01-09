@@ -58,5 +58,29 @@ namespace ApplicationHub.Properties {
                 this["IpAddress"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        public string IpAddressSub {
+            get {
+                return ((string)(this["IpAddressSub"]));
+            }
+            set {
+                this["IpAddressSub"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5557")]
+        public int PortSub {
+            get {
+                return ((int)(this["PortSub"]));
+            }
+            set {
+                this["PortSub"] = value;
+            }
+        }
     }
 }

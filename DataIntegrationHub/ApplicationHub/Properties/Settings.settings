@@ -11,5 +11,11 @@
     <Setting Name="IpAddress" Type="System.String" Scope="User">
       <Value Profile="(Default)">127.0.0.1</Value>
     </Setting>
+    <Setting Name="IpAddressSub" Type="System.String" Scope="User">
+      <Value Profile="(Default)">127.0.0.1</Value>
+    </Setting>
+    <Setting Name="PortSub" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5557</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

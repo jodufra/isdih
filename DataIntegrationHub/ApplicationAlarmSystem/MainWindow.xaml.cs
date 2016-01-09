@@ -25,6 +25,7 @@ using System.Xml.Serialization;
 using ApplicationLib.Entities;
 using System.Data;
 using System.Threading;
+using System.Net;
 
 namespace ApplicationAlarmSystem
 {
@@ -33,13 +34,16 @@ namespace ApplicationAlarmSystem
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ZContext dataSubContext;
+        private ZSocket dataSubSocket;
+        private ZContext alarmPubContext;
+        private ZSocket alarmPubSocket;
         private static string START = "Start";
         private static string STOP = "Stop";
         private MyXmlHandler myxml = new MyXmlHandler(@"alarmsRules.xml",@"alarmsRules.xsd");
         private List<Rule> listas = new List<Rule>();
-        Thread thread;
-        
-         
+        private Thread threadData;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -48,8 +52,12 @@ namespace ApplicationAlarmSystem
             btnCancel.IsEnabled = false;
             
 
+            CheckZeroMQLibs();
+
+            addressTb.Text = Properties.Settings.Default.IpAddress;
             addressBtn.Text = Properties.Settings.Default.IpAddress;
             portBtn.Text = Properties.Settings.Default.Port.ToString();
+            portPubTb.Text = Properties.Settings.Default.PortPub.ToString();
             
             if (myxml.validateXml())
                 updateListView();
@@ -77,14 +85,14 @@ namespace ApplicationAlarmSystem
                         Min = int.Parse(rules.Element("min").Value),
                         Max = int.Parse(rules.Element("max").Value)  
                     };
-                    items.Add(lRule);                   
-                }          
+                    items.Add(lRule);
+                    //Console.WriteLine(items[0].Channel);
+                    
+                }
                 return items;
             }
 
         }
-
-       
 
         public class Rule
         {
@@ -92,8 +100,6 @@ namespace ApplicationAlarmSystem
             public int Min { get; set; }
             public int Max { get; set; }
         }
-
-      
 
         private void alarmsRules_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -108,7 +114,6 @@ namespace ApplicationAlarmSystem
 
         }
 
-
         private void updateListView()
         {
             //Se o ficheiro nao existir, cria um ficheiro XML
@@ -120,8 +125,6 @@ namespace ApplicationAlarmSystem
             alarmsRules.ItemsSource = RuleList;
 
         }
-
-       
 
         private void btnXML_Click(object sender, RoutedEventArgs e)
         {
@@ -160,45 +163,75 @@ namespace ApplicationAlarmSystem
 
         private void starStopBtn_Click(object sender, RoutedEventArgs e)
         {
-            
-            if (thread == null)
+            CheckZeroMQLibs();
+            CreateSubscriberAndPublisher();
+        }
+
+        private void CreateSubscriberAndPublisher()
+        {
+            if (threadData == null)
             {
+                CreateAlarmPublisher();
                 starStopBtn.Content = STOP;
                 disableHubConnSetts(false);
-                ThreadStart ts = new ThreadStart(SubscribeAndConsume);
-                thread = new Thread(ts);
-                thread.Start();
+                ThreadStart ts = new ThreadStart(ConsumeData);
+                threadData = new Thread(ts);
+                threadData.Start();
             }
             else
             {
                 starStopBtn.Content = START;
                 disableHubConnSetts(true);
-                thread.Abort();
+                threadData.Abort();
+                threadData = null;
+                DisposeConnections();
             }
         }
 
-        private void disableHubConnSetts(bool action)
+        private void DisposeConnections()
         {
-            saveBtn.IsEnabled = action;
-            addressBtn.IsEnabled = action;
-            portBtn.IsEnabled = action;
+            alarmPubSocket.Dispose();
+            alarmPubContext.Dispose();
+            dataSubSocket.Dispose();
+            dataSubContext.Dispose();  
         }
 
-        private void SubscribeAndConsume()
+        private void CreateAlarmPublisher()
         {
-            ZContext context = new ZContext();
-            ZSocket subscriber = new ZSocket(context, ZSocketType.SUB);
-            subscriber.Connect("tcp://" + Properties.Settings.Default.IpAddress + ":" + Properties.Settings.Default.Port.ToString());
-            subscriber.SubscribeAll();
-            
+            alarmPubContext = new ZContext();
+            alarmPubSocket = new ZSocket(alarmPubContext, ZSocketType.PUB);
+            alarmPubSocket.Bind("tcp://" + Properties.Settings.Default.IpAddressPub + ":" + Properties.Settings.Default.PortPub);
+        }
+
+        private void ConsumeData()
+        {
+            dataSubContext = new ZContext();
+            dataSubSocket = new ZSocket(dataSubContext, ZSocketType.SUB);
+            dataSubSocket.Connect("tcp://" + Properties.Settings.Default.IpAddress + ":" + Properties.Settings.Default.Port.ToString());
+            dataSubSocket.SubscribeAll();
+
             while (true)
             {
-                var frame = subscriber.ReceiveFrame();
+                try
+                {
+                    var frame = dataSubSocket.ReceiveFrame();
+                    //Console.WriteLine(frame.ReadString());
+                    //XmlDocument doc1 = new XmlDocument();
+                    //doc1.Load(frame.ReadString());
+                    //XmlNode _channelExist = doc1.no("channel");
+                    XmlSerializer serializer = new XmlSerializer(typeof(Record));
+                    Record record = (Record)serializer.Deserialize(new StringReader(frame.ReadString()));
 
-                //Console.WriteLine(frame.ReadString());
-                //XmlDocument doc1 = new XmlDocument();
-                //doc1.Load(frame.ReadString());
-                //XmlNode _channelExist = doc1.no("channel");
+                    this.Dispatcher.Invoke((Action)(() =>
+                    {
+                        logLst.Items.Add(record.ToString());
+                        var zFrame = new ZFrame("Alarm!!!"); // Create a frame of the Xml
+                        logLst.Items.Add(zFrame.ToString());
+                        alarmPubSocket.Send(zFrame); //Send the Xml to subs
+                    }));
+                    //Console.WriteLine("channel: " + record.Channel + " -> " + record.Value);
+                    //subscriber.Send(new ZFrame("asd"));
+
 
                 XmlSerializer serializer = new XmlSerializer(typeof(Record));
                 Record record = (Record)serializer.Deserialize(new StringReader(frame.ReadString()));
@@ -220,9 +253,17 @@ namespace ApplicationAlarmSystem
                             Console.WriteLine("Canal:"+listas[i].Channel+"OK!");
                         }
                 }
-                    
-                
+
             }
+        }
+
+         private void disableHubConnSetts(bool action)
+        {
+            saveBtn.IsEnabled = action;
+            addressTb.IsEnabled = action;
+            portTb.IsEnabled = action;
+            addressPubTb.IsEnabled = action;
+            portPubTb.IsEnabled = action;
         }
 
         public object ExitFrame(object f)
@@ -247,7 +288,49 @@ namespace ApplicationAlarmSystem
             if (!char.IsDigit(e.Text, e.Text.Length - 1))
             {
                 e.Handled = true;
+            }
+        }
 
+        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            IPAddress ip;
+            if (!String.IsNullOrEmpty(addressTb.Text) && IPAddress.TryParse(addressTb.Text, out ip))
+            {
+                if (!String.IsNullOrEmpty(portTb.Text))
+                {
+                    if (!String.IsNullOrEmpty(addressPubTb.Text) && IPAddress.TryParse(addressPubTb.Text, out ip))
+                    {
+                        if (!String.IsNullOrEmpty(portPubTb.Text))
+                        {
+                            Properties.Settings.Default.IpAddress = addressTb.Text;
+                            Properties.Settings.Default.Port = Convert.ToInt32(portTb.Text);
+                            Properties.Settings.Default.IpAddressPub = addressPubTb.Text;
+                            Properties.Settings.Default.PortPub = Convert.ToInt32(portPubTb.Text);
+                            Properties.Settings.Default.Save();
+                            MessageBox.Show("Hub Connections Saved!");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Invalid Subscriver Port!");
+                            portPubTb.Text = Properties.Settings.Default.PortPub.ToString();
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Empty or Invalid Subscriber Ip Address!");
+                        addressPubTb.Text = Properties.Settings.Default.IpAddressPub;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Invalid Publisher Port!");
+                    portTb.Text = Properties.Settings.Default.Port.ToString();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Empty or Invalid Publisher Ip Address!");
+                addressTb.Text = Properties.Settings.Default.IpAddress;
             }
         }
 
@@ -280,6 +363,24 @@ namespace ApplicationAlarmSystem
             btnUpdate.IsEnabled = true;
             btnDelete.IsEnabled = true;
             btnCancel.IsEnabled = true;
+        }
+
+         private void CheckZeroMQLibs()
+        {
+            try
+            {
+                ZeroMQ.ZContext.Create();
+            }
+            catch (Exception e)
+            {
+                logLst.Items.Add("The ZeroMQ dll's are missing from your windows directory!");
+                this.IsEnabled = false;
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }

@@ -42,7 +42,6 @@ namespace ApplicationHub
             CommunicationHubController.Instance.OnSensorDataReceived(RecordBuilder.BuildRecord(data));
         }
 
-
         public bool StopStart()
         {
             if (_sensorNode != null)
@@ -50,6 +49,7 @@ namespace ApplicationHub
                 if (Settings.Instance.IsWorking)
                 {
                     Settings.Instance.IsWorking = false;
+                    //_sensorNode.Stop();
                     return false;
                 }
                 else

@@ -46,5 +46,29 @@ namespace ApplicationAlarmSystem.Properties {
                 this["Port"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        public string IpAddressPub {
+            get {
+                return ((string)(this["IpAddressPub"]));
+            }
+            set {
+                this["IpAddressPub"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5557")]
+        public int PortPub {
+            get {
+                return ((int)(this["PortPub"]));
+            }
+            set {
+                this["PortPub"] = value;
+            }
+        }
     }
 }
