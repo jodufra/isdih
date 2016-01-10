@@ -48,7 +48,7 @@ namespace ApplicationWebClient.Application.Others
 
             int row = 0;
             ws.Cells["A" + ++row].Value = "Statistics " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString();
-            using (ExcelRange r = ws.Cells["A" + row + ":W" + row])
+            using (ExcelRange r = ws.Cells["A" + row + ":S" + row])
             {
                 r.Merge = true;
                 r.Style.Font.SetFromFont(new Font("Arial", 22, FontStyle.Italic));
@@ -57,6 +57,7 @@ namespace ApplicationWebClient.Application.Others
                 r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                 r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
             }
+
 
             #region Tables
             ws.Cells["A" + ++row].Value = "Ammount of records";
@@ -84,114 +85,176 @@ namespace ApplicationWebClient.Application.Others
             if (hasHumi) ws.Cells["B" + row].Value = hcount;
 
             // Temperature
-            row++;
-            ws.Cells["A" + ++row].Value = "Temperature";
-            using (ExcelRange r = ws.Cells["A" + row + ":B" + row])
+            if (hasTemp)
             {
-                r.Merge = true;
-                r.Style.Font.SetFromFont(new Font("Arial", 22, FontStyle.Italic));
-                r.Style.Font.Color.SetColor(Color.White);
-                r.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous;
-                r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
+                row++;
+                ws.Cells["A" + ++row].Value = "Temperature";
+                using (ExcelRange r = ws.Cells["A" + row + ":B" + row])
+                {
+                    r.Merge = true;
+                    r.Style.Font.SetFromFont(new Font("Arial", 22, FontStyle.Italic));
+                    r.Style.Font.Color.SetColor(Color.White);
+                    r.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous;
+                    r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
+                }
+
+                var tmin = lrecords.Where(r => r.Channel == "T").Select(r => (float?)r.Value).Min();
+                var tavg = lrecords.Where(r => r.Channel == "T").Select(r => (float?)r.Value).Average();
+                var tmax = lrecords.Where(r => r.Channel == "T").Select(r => (float?)r.Value).Max();
+
+                ws.Cells["A" + ++row].Value = "Temperature";
+                ws.Cells["B" + row].Value = "Value";
+                ws.Cells["A" + ++row].Value = "Minimum";
+                ws.Cells["B" + row].Value = tmin;
+                ws.Cells["A" + ++row].Value = "Average";
+                ws.Cells["B" + row].Value = tavg;
+                ws.Cells["A" + ++row].Value = "Maximum";
+                ws.Cells["B" + row].Value = tmax;
             }
 
-            var tmin = lrecords.Where(r => r.Channel == "T").Select(r => (float?)r.Value).Min();
-            var tavg = lrecords.Where(r => r.Channel == "T").Select(r => (float?)r.Value).Average();
-            var tmax = lrecords.Where(r => r.Channel == "T").Select(r => (float?)r.Value).Max();
-
-
-            ws.Cells["A" + ++row].Value = "Temperature";
-            ws.Cells["B" + row].Value = "Value";
-            if (hasTemp) ws.Cells["A" + ++row].Value = "Minimum";
-            if (hasTemp) ws.Cells["B" + row].Value = tmin;
-            if (hasTemp) ws.Cells["A" + ++row].Value = "Average";
-            if (hasTemp) ws.Cells["B" + row].Value = tavg;
-            if (hasTemp) ws.Cells["A" + ++row].Value = "Maximum";
-            if (hasTemp) ws.Cells["B" + row].Value = tmax;
 
             // Pressure
-            row++;
-            ws.Cells["A" + ++row].Value = "Pressure";
-            using (ExcelRange r = ws.Cells["A" + row + ":B" + row])
+            if (hasPres)
             {
-                r.Merge = true;
-                r.Style.Font.SetFromFont(new Font("Arial", 22, FontStyle.Italic));
-                r.Style.Font.Color.SetColor(Color.White);
-                r.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous;
-                r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
+                row++;
+                ws.Cells["A" + ++row].Value = "Pressure";
+                using (ExcelRange r = ws.Cells["A" + row + ":B" + row])
+                {
+                    r.Merge = true;
+                    r.Style.Font.SetFromFont(new Font("Arial", 22, FontStyle.Italic));
+                    r.Style.Font.Color.SetColor(Color.White);
+                    r.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous;
+                    r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
+                }
+
+                var pmin = lrecords.Where(r => r.Channel == "P").Select(r => (float?)r.Value).Min();
+                var pavg = lrecords.Where(r => r.Channel == "P").Select(r => (float?)r.Value).Average();
+                var pmax = lrecords.Where(r => r.Channel == "P").Select(r => (float?)r.Value).Max();
+
+
+                ws.Cells["A" + ++row].Value = "Pressure";
+                ws.Cells["B" + row].Value = "Value";
+                ws.Cells["A" + ++row].Value = "Minimum";
+                ws.Cells["B" + row].Value = pmin;
+                ws.Cells["A" + ++row].Value = "Average";
+                ws.Cells["B" + row].Value = pavg;
+                ws.Cells["A" + ++row].Value = "Maximum";
+                ws.Cells["B" + row].Value = pmax;
             }
 
-            var pmin = lrecords.Where(r => r.Channel == "P").Select(r => (float?)r.Value).Min();
-            var pavg = lrecords.Where(r => r.Channel == "P").Select(r => (float?)r.Value).Average();
-            var pmax = lrecords.Where(r => r.Channel == "P").Select(r => (float?)r.Value).Max();
-
-
-            ws.Cells["A" + ++row].Value = "Pressure";
-            ws.Cells["B" + row].Value = "Value";
-            if (hasPres) ws.Cells["A" + ++row].Value = "Minimum";
-            if (hasPres) ws.Cells["B" + row].Value = pmin;
-            if (hasPres) ws.Cells["A" + ++row].Value = "Average";
-            if (hasPres) ws.Cells["B" + row].Value = pavg;
-            if (hasPres) ws.Cells["A" + ++row].Value = "Maximum";
-            if (hasPres) ws.Cells["B" + row].Value = pmax;
 
             // Humidity
-            row++;
-            ws.Cells["A" + ++row].Value = "Humidity";
-            using (ExcelRange r = ws.Cells["A" + row + ":B" + row])
+            if (hasHumi)
             {
-                r.Merge = true;
-                r.Style.Font.SetFromFont(new Font("Arial", 22, FontStyle.Italic));
-                r.Style.Font.Color.SetColor(Color.White);
-                r.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous;
-                r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
+
+                row++;
+                ws.Cells["A" + ++row].Value = "Humidity";
+                using (ExcelRange r = ws.Cells["A" + row + ":B" + row])
+                {
+                    r.Merge = true;
+                    r.Style.Font.SetFromFont(new Font("Arial", 22, FontStyle.Italic));
+                    r.Style.Font.Color.SetColor(Color.White);
+                    r.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous;
+                    r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
+                }
+
+                var hmin = lrecords.Where(r => r.Channel == "H").Select(r => (float?)r.Value).Min();
+                var havg = lrecords.Where(r => r.Channel == "H").Select(r => (float?)r.Value).Average();
+                var hmax = lrecords.Where(r => r.Channel == "H").Select(r => (float?)r.Value).Max();
+
+                ws.Cells["A" + ++row].Value = "Humidity";
+                ws.Cells["B" + row].Value = "Value";
+                ws.Cells["A" + ++row].Value = "Minimum";
+                ws.Cells["B" + row].Value = hmin;
+                ws.Cells["A" + ++row].Value = "Average";
+                ws.Cells["B" + row].Value = havg;
+                ws.Cells["A" + ++row].Value = "Maximum";
+                ws.Cells["B" + row].Value = hmax;
             }
-
-            var hmin = lrecords.Where(r => r.Channel == "H").Select(r => (float?)r.Value).Min();
-            var havg = lrecords.Where(r => r.Channel == "H").Select(r => (float?)r.Value).Average();
-            var hmax = lrecords.Where(r => r.Channel == "H").Select(r => (float?)r.Value).Max();
-
-            ws.Cells["A" + ++row].Value = "Humidity";
-            ws.Cells["B" + row].Value = "Value";
-            if (hasHumi) ws.Cells["A" + ++row].Value = "Minimum";
-            if (hasHumi) ws.Cells["B" + row].Value = hmin;
-            if (hasHumi) ws.Cells["A" + ++row].Value = "Average";
-            if (hasHumi) ws.Cells["B" + row].Value = havg;
-            if (hasHumi) ws.Cells["A" + ++row].Value = "Maximum";
-            if (hasHumi) ws.Cells["B" + row].Value = hmax;
             #endregion
 
+            List<int[]> chartPositions = new List<int[]>
+            {
+                new int[]{2,3},
+                new int[]{2,11},
+                new int[]{18,3},
+                new int[]{18,11}
+            };
+            int charCount = 0;
+
+            int extraRows = (hasTemp ? 1 : 0) + (hasPres ? 1 : 0) + (hasHumi ? 1 : 0);
             var pieChart = ws.Drawings.AddChart("crtRecordsCount", eChartType.PieExploded3D) as ExcelPieChart;
             //Set top left corner to row 1 column 2
-            pieChart.SetPosition(2, 0, 3, 0);
-            pieChart.SetSize(600, 400);
-            pieChart.Series.Add(ExcelRange.GetAddress(4, 2, (hasTemp ? 2 : 0) + (hasPres ? 2 : 0) + (hasHumi ? 2 : 0), 2), ExcelRange.GetAddress(4, 1, 6, 1));
+            pieChart.SetPosition(chartPositions[charCount][0], 0, chartPositions[charCount][1], 0);
+            pieChart.SetSize(450, 300);
+            pieChart.Series.Add(ExcelRange.GetAddress(4, 2, 3 + extraRows, 2), ExcelRange.GetAddress(4, 1, 3 + extraRows, 1));
             pieChart.Title.Text = "Records Count";
             //Set datalabels and remove the legend
             pieChart.DataLabel.ShowCategory = true;
             pieChart.DataLabel.ShowPercent = false;
             pieChart.DataLabel.ShowLeaderLines = true;
+            pieChart.DataLabel.ShowValue = true;
             pieChart.Legend.Remove();
+            charCount++;
 
             if (hasTemp)
             {
                 var tbarChart = ws.Drawings.AddChart("crtTemperatureInfo", eChartType.BarClustered) as ExcelBarChart;
                 //Set top left corner to row 1 column 2
-                tbarChart.SetPosition(10, 0, 3, 0);
-                tbarChart.SetSize(600, 400);
-                tbarChart.Series.Add(ExcelRange.GetAddress(10, 2, 10, 2), ExcelRange.GetAddress(10, 1, 10, 1));
-                tbarChart.Series.Add(ExcelRange.GetAddress(16, 2, 16, 2), ExcelRange.GetAddress(16, 1, 16, 1));
-                tbarChart.Series.Add(ExcelRange.GetAddress(22, 2, 22, 2), ExcelRange.GetAddress(22, 1, 22, 1));
+                tbarChart.SetPosition(chartPositions[charCount][0], 0, chartPositions[charCount][1], 0);
+                tbarChart.SetSize(450, 300);
+                extraRows = (hasPres ? 1 : 0) + (hasHumi ? 1 : 0);
+                tbarChart.Series.Add(ExcelRange.GetAddress(extraRows + 8, 2, extraRows + 10, 2), ExcelRange.GetAddress(extraRows + 8, 1, extraRows + 10, 1));
                 tbarChart.Title.Text = "Temperature Statistics";
                 //Set datalabels and remove the legend
                 tbarChart.DataLabel.ShowCategory = true;
                 tbarChart.DataLabel.ShowPercent = false;
                 tbarChart.DataLabel.ShowLeaderLines = true;
+                tbarChart.DataLabel.ShowValue = true;
                 tbarChart.Legend.Remove();
+                charCount++;
             }
+
+            if (hasPres)
+            {
+                var pbarChart = ws.Drawings.AddChart("crPressureInfo", eChartType.BarClustered) as ExcelBarChart;
+                //Set top left corner to row 1 column 2
+                pbarChart.SetPosition(chartPositions[charCount][0], 0, chartPositions[charCount][1], 0);
+                pbarChart.SetSize(450, 300);
+                extraRows = (hasPres ? 7 : 0) + (hasHumi ? 1 : 0);
+                pbarChart.Series.Add(ExcelRange.GetAddress(extraRows + 8, 2, extraRows + 10, 2), ExcelRange.GetAddress(extraRows + 8, 1, extraRows + 10, 1));
+                pbarChart.Title.Text = "Pressure Statistics";
+                //Set datalabels and remove the legend
+                pbarChart.DataLabel.ShowCategory = true;
+                pbarChart.DataLabel.ShowPercent = false;
+                pbarChart.DataLabel.ShowLeaderLines = true;
+                pbarChart.DataLabel.ShowValue = true;
+                pbarChart.Legend.Remove();
+                charCount++;
+            }
+
+            if (hasHumi)
+            {
+                var hbarChart = ws.Drawings.AddChart("crHumidityInfo", eChartType.BarClustered) as ExcelBarChart;
+                //Set top left corner to row 1 column 2
+                hbarChart.SetPosition(chartPositions[charCount][0], 0, chartPositions[charCount][1], 0);
+                hbarChart.SetSize(450, 300);
+                extraRows = (hasPres ? 7 : 0) + (hasHumi ? 7 : 0);
+                hbarChart.Series.Add(ExcelRange.GetAddress(extraRows + 8, 2, extraRows + 10, 2), ExcelRange.GetAddress(extraRows + 8, 1, extraRows + 10, 1));
+                hbarChart.Title.Text = "Humidity Statistics";
+                //Set datalabels and remove the legend
+                hbarChart.DataLabel.ShowCategory = true;
+                hbarChart.DataLabel.ShowPercent = false;
+                hbarChart.DataLabel.ShowLeaderLines = true;
+                hbarChart.DataLabel.ShowValue = true;
+                hbarChart.Legend.Remove();
+                charCount++;
+            }
+
+            ws.Cells["A2:S35"].AutoFitColumns();
             #endregion
 
             return excel;

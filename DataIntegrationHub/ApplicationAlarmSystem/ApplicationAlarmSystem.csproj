@@ -62,7 +62,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -79,7 +79,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="ZeroMQ">
-      <HintPath>..\..\..\..\..\Google Drive\Eng. Inf\IS\Prática\Ficha_6\ZeroMQ\ZeroMQ.Release\bin\Release\ZeroMQ.dll</HintPath>
+      <HintPath>..\..\resources\ZeroMQ.Release\bin\Release\ZeroMQ.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -123,7 +123,6 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="ApplicationAlarmSystem_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
