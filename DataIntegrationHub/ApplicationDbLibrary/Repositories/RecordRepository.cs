@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ApplicationDbLibrary.Repositories
 {
     public enum OrderOptionRecord { IdRecordAsc, IdRecordDesc, NodeIdAsc, NodeIdDesc, ChannelAsc, ChannelDesc, ValueAsc, ValueDesc, DateCreatedAsc, DateCreatedDesc }
-    public enum FilterOptionRecord { NodeId, NodeIds, Channel, Channels, DateCreatedMin, DateCreatedMax }
+    public enum FilterOptionRecord { IdRecordMin, NodeId, NodeIds, Channel, Channels, DateCreatedMin, DateCreatedMax }
     public enum GroupOptionRecord { Average, Min, Max }
 
     public static class RecordRepository
@@ -48,6 +48,11 @@ namespace ApplicationDbLibrary.Repositories
 
             if (Options != null)
             {
+                if (Options.ContainsKey(FilterOptionRecord.IdRecordMin))
+                {
+                    Int32 id = (Int32)Options[FilterOptionRecord.IdRecordMin];
+                    query = from p in query where p.IdRecord > id select p;
+                }
                 if (Options.ContainsKey(FilterOptionRecord.NodeId))
                 {
                     Int32 id = (Int32)Options[FilterOptionRecord.NodeId];

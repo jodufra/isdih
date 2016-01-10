@@ -121,6 +121,8 @@ namespace ApplicationDBPersisTence
                     this.Dispatcher.Invoke((Action)(() =>
                     {
                         logLb.Items.Add(record.Log);
+                        if (logLb.Items.Count >= Int16.MaxValue)
+                            logLb.Items.Clear();
                     }));
                     RecordRepository.Save(record);
                 }
@@ -263,6 +265,8 @@ namespace ApplicationDBPersisTence
             {
                 //yes
                 Properties.Settings.Default.ConnectionStringChanged = csTb.Text;
+                Properties.Settings.Default.Save();
+                Properties.Settings.Default.Reload();
                 AppRestart();
             }
         }
@@ -270,7 +274,7 @@ namespace ApplicationDBPersisTence
         private void AppRestart()
         {
             System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-            Application.Current.Shutdown();
+            Environment.Exit(Environment.ExitCode);
         }
 
         private void csTb_TextChanged(object sender, TextChangedEventArgs e)
@@ -286,8 +290,13 @@ namespace ApplicationDBPersisTence
             }
             else
             {
-                Properties.Settings.Default.ConnectionStringChanged = "";
-                AppRestart();
+                if (MessageBox.Show("The application will have to restart, are you shure?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    Properties.Settings.Default.ConnectionStringChanged = "";
+                    Properties.Settings.Default.Save();
+                    Properties.Settings.Default.Reload();
+                    AppRestart();
+                }
             }
         }
 
@@ -360,10 +369,29 @@ namespace ApplicationDBPersisTence
         private void UpdateFiles()
         {
             int count;
+
+            var options = new Dictionary<FilterOptionRecord, Object>();
+            if (!String.IsNullOrEmpty(Properties.Settings.Default.LastRecordId))
+            {
+               // options.Add(FilterOptionRecord.IdRecordMin, Convert.ToInt32(Properties.Settings.Default.LastRecordId));
+
+            }
+
+            var now = DateTime.Now;
+            var min = new DateTime(now.Year, now.Month, now.Day - 1);
+            var max = new DateTime(now.Year, now.Month, now.Day).AddTicks(-1);
+
+
+
+            options.Add(FilterOptionRecord.DateCreatedMin, min);
+            options.Add(FilterOptionRecord.DateCreatedMax, max);
+            
+            List<Record> lst = RecordRepository.Get(null, null, null, out count, OrderOptionRecord.DateCreatedAsc, options);
+
+            var avg = lst.GroupBy(p => p.Channel).Average(p => p.Average(c => c.Value));
             
             foreach (var file in filesToUpdateLst)
             {
-                
                 XmlDocument doc = new XmlDocument();
                 doc.Load(file);
                 XmlNodeList statis = doc.SelectNodes("/statistics");

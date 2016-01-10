@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ApplicationAlarmSystem.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Alarms System" Height="444.332" Width="535.668" WindowStartupLocation="CenterScreen" Closing="Window_Closing" ResizeMode="NoResize">
+        Title="Alarm System" Height="416.999" Width="535.668" WindowStartupLocation="CenterScreen" Closing="Window_Closing" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -41,8 +41,6 @@
             <Label Content="Alarm Rules:" HorizontalAlignment="Left" Margin="6,112,0,0" VerticalAlignment="Top" Height="23"/>
             <Button Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="400,84,0,0" VerticalAlignment="Top" Width="50" Height="23" Click="saveBtn_Click"/>
             <Separator HorizontalAlignment="Left" Height="5" Margin="10,111,0,0" VerticalAlignment="Top" Width="495"/>
-            <Separator HorizontalAlignment="Left" Height="5" Margin="10,373,0,0" VerticalAlignment="Top" Width="495"/>
-            <CheckBox Content="Start On App StartUp" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,379,0,0"/>
             <Label Content="Hub Connection (Alarm Publisher):" HorizontalAlignment="Left" Margin="6,59,0,0" VerticalAlignment="Top" Height="26" Width="195"/>
             <TextBox x:Name="addressPubTb" HorizontalAlignment="Left" Height="23" Margin="65,83,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
             <TextBox x:Name="portPubTb" HorizontalAlignment="Left" Height="23" Margin="224,83,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
