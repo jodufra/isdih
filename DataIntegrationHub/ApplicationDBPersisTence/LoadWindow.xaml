@@ -1,0 +1,8 @@
+﻿<Window x:Class="ApplicationDBPersisTence.LoadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DBPersisTence" Height="83" Width="316" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Label Content="Connecting to Database...&#xA;" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Width="210" FontSize="14"/>
+    </Grid>
+</Window>

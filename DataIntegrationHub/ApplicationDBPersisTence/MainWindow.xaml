@@ -8,27 +8,25 @@
         </Grid.ColumnDefinitions>
         <Grid Grid.Row="0" Margin="0,0,10,10">
             <Label Content="Status:" HorizontalAlignment="Left" Margin="8,178,0,0" VerticalAlignment="Top" Height="26" Width="46"/>
-            <Label Content="DataBase Connection:" HorizontalAlignment="Left" Margin="12,12,0,0" VerticalAlignment="Top" Height="26" Width="126"/>
-            <Label Content="Hub Connection:" HorizontalAlignment="Left" Margin="12,100,0,0" VerticalAlignment="Top" Height="26" Width="98"/>
+            <Label Content="DataBase Connection String:" HorizontalAlignment="Left" Margin="12,0,0,0" VerticalAlignment="Top" Height="26" Width="163"/>
+            <Label Content="Hub Connection:" HorizontalAlignment="Left" Margin="12,104,0,0" VerticalAlignment="Top" Height="26" Width="98"/>
             <Label Name="statusLb" Content="Stopped" HorizontalAlignment="Left" Margin="48,178,0,0" VerticalAlignment="Top" Height="26" Width="54"/>
             <Button x:Name="btnStartStop" Content="Start" HorizontalAlignment="Left" Margin="14,162,0,0" VerticalAlignment="Top" Width="76" Height="20" Click="btnStartStop_Click"/>
-            <Button Content="Open Statistics Folder" HorizontalAlignment="Left" Margin="14,204,0,0" VerticalAlignment="Top" Width="170" Height="20"/>
+            <Button Name="openStatFolderBtn" Content="Update Statistics And Open Folder" HorizontalAlignment="Left" Margin="14,204,0,0" VerticalAlignment="Top" Width="208" Height="20" Click="openStatFolderBtn_Click"/>
             <Label Content="Event Log:" HorizontalAlignment="Left" Margin="4,236,0,0" VerticalAlignment="Top" Height="26" Width="64"/>
-            <Button Content="Save" HorizontalAlignment="Left" Margin="224,70,0,0" VerticalAlignment="Top" Width="76" Height="20"/>
-            <Button Name="saveHubSettBtn" Content="Save" HorizontalAlignment="Left" Margin="272,126,0,0" VerticalAlignment="Top" Width="60" Height="22" Click="saveHubSettBtn_Click"/>
-            <Button Content="Test" HorizontalAlignment="Left" Margin="302,70,0,0" VerticalAlignment="Top" Width="48" Height="20"/>
-            <TextBox Name="addressTb" HorizontalAlignment="Left" Height="22" Margin="64,126,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" ToolTip="Address" />
-            <TextBox Name="portTb" PreviewTextInput="PreviewTextInput" HorizontalAlignment="Left" Height="22" Margin="222,126,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" ToolTip="Port" DataObject.Pasting="portTb_Pasting"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="18,38,0,0" TextWrapping="Wrap" Text="Server" VerticalAlignment="Top" Width="92" ToolTip=""/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="116,38,0,0" TextWrapping="Wrap" Text="DBname" VerticalAlignment="Top" Width="90" ToolTip=""/>
+            <Button Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="137,84,0,0" VerticalAlignment="Top" Width="60" Height="22" IsEnabled="False" Click="saveBtn_Click"/>
+            <Button Name="saveHubSettBtn" Content="Save" HorizontalAlignment="Left" Margin="273,130,0,0" VerticalAlignment="Top" Width="60" Height="22" Click="saveHubSettBtn_Click"/>
+            <Button Name="testBtn" Content="Test" HorizontalAlignment="Left" Margin="19,84,0,0" VerticalAlignment="Top" Width="48" Height="22" Click="testBtn_Click"/>
+            <TextBox Name="addressTb" HorizontalAlignment="Left" Height="22" Margin="64,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" ToolTip="Address" />
+            <TextBox Name="portTb" PreviewTextInput="PreviewTextInput" HorizontalAlignment="Left" Height="22" Margin="222,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" ToolTip="Port" DataObject.Pasting="portTb_Pasting"/>
+            <TextBox Name="csTb" HorizontalAlignment="Left" Height="53" Margin="18,26,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="485" TextChanged="csTb_TextChanged" />
             <Button Name="clearLogBtn" Content="Clear Log" HorizontalAlignment="Left" Margin="427,262,0,0" VerticalAlignment="Top" Width="76" Height="20" Click="clearLogBtn_Click"/>
             <CheckBox Content="Start On App StartUp" HorizontalAlignment="Left" Margin="10,339,0,0" VerticalAlignment="Top" Height="16" Width="132"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="18,68,0,0" TextWrapping="Wrap" Text="User Id" VerticalAlignment="Top" Width="92" ToolTip=""/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="116,68,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top" Width="90" ToolTip="" />
-            <Label Content="Address:" HorizontalAlignment="Left" Margin="12,126,0,0" VerticalAlignment="Top" Height="28" Width="54"/>
-            <Label Content="Port:" HorizontalAlignment="Left" Margin="188,126,0,0" VerticalAlignment="Top" Height="28" Width="34"/>
+            <Label Content="Address:" HorizontalAlignment="Left" Margin="12,130,0,0" VerticalAlignment="Top" Height="28" Width="54"/>
+            <Label Content="Port:" HorizontalAlignment="Left" Margin="188,130,0,0" VerticalAlignment="Top" Height="28" Width="34"/>
             <CheckBox Content="Minimize to tray" HorizontalAlignment="Left" Margin="147,339,0,0" VerticalAlignment="Top" Height="16" Width="132" IsChecked="True"/>
             <ListBox Name="logLb" HorizontalAlignment="Left" Height="72" Margin="10,262,0,0" VerticalAlignment="Top" Width="412"/>
+            <Button x:Name="resetBtn" Content="Reset" HorizontalAlignment="Left" Margin="72,84,0,0" VerticalAlignment="Top" Width="60" Height="22" Click="resetBtn_Click"/>
         </Grid>
     </Grid>
 </Window>

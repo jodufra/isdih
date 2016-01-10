@@ -87,7 +87,7 @@ namespace ApplicationHub
                     var zFrame = new ZFrame(XmlString); // Create a frame of the Xml
                     dataPubSocket.Send(zFrame); //Send the Xml to subs
                
-                    Console.WriteLine(XmlString); //Debug ###Remover
+                    //Console.WriteLine(XmlString); //Debug ###Remover
                     XmlWriter.Close();
                     XmlWriter.Dispose();
                     SWriter.Close();

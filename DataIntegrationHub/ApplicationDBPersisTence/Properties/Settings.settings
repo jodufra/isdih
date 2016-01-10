@@ -8,5 +8,14 @@
     <Setting Name="Port" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5556</Value>
     </Setting>
+    <Setting Name="ConnectionStringOriginal" Type="System.String" Scope="User">
+      <Value Profile="(Default)">server=70a908ac-7d83-4d2f-9498-a5860145a346.mysql.sequelizer.com;database=db70a908ac7d834d2f9498a5860145a346;uid=heyyckzsninuqzcy;pwd=GDmXLqBTSYUfFJKMAk3oejtqPvBqKnTVXEqpLAuaPnopLXj4RZuBdZ3wk4ipWmiD</Value>
+    </Setting>
+    <Setting Name="ConnectionStringChanged" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LastRecordId" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

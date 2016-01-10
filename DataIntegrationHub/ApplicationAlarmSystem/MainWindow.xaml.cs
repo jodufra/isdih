@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
-
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Linq;
@@ -38,6 +37,8 @@ namespace ApplicationAlarmSystem
         private ZSocket dataSubSocket;
         private ZContext alarmPubContext;
         private ZSocket alarmPubSocket;
+        private static string STOPPED = "Stopped";
+        private static string RUNNING = "Running";
         private static string START = "Start";
         private static string STOP = "Stop";
         private MyXmlHandler myxml = new MyXmlHandler(@"alarmsRules.xml",@"alarmsRules.xsd");
@@ -47,51 +48,48 @@ namespace ApplicationAlarmSystem
         public MainWindow()
         {
             InitializeComponent();
+            
             btnUpdate.IsEnabled = false;
             btnDelete.IsEnabled = false;
             btnCancel.IsEnabled = false;
             
-
             CheckZeroMQLibs();
 
-            addressTb.Text = Properties.Settings.Default.IpAddress;
-            addressBtn.Text = Properties.Settings.Default.IpAddress;
-            portBtn.Text = Properties.Settings.Default.Port.ToString();
+            addressSubTb.Text = Properties.Settings.Default.IpAddressSub;
+            portSubTb.Text = Properties.Settings.Default.PortSub.ToString();
+            addressPubTb.Text = Properties.Settings.Default.IpAddressPub;
             portPubTb.Text = Properties.Settings.Default.PortPub.ToString();
             
             if (myxml.validateXml())
                 updateListView();
             else
             {
-                MessageBox.Show("O ficheiro xml Não é válido! O ficheiro XML foi criado!");
+                logLst.Items.Add("The XML rules file is not valid!");
                 myxml.CreateXML();
                 
             }
         }
         
-        class DAL_OCUSMA
+        private class DAL_OCUSMA
         {
-        
+
             public static List<Rule> LoadOCUSMA()
             {
                 List<Rule> items = new List<Rule>();
                 var ruls = from c in XElement.Load("alarmsRules.xml").Elements("Rule") select c;
-                
+
                 foreach (var rules in ruls)
-                {                 
+                {
                     Rule lRule = new Rule
                     {
                         Channel = rules.Element("channel").Value,
                         Min = int.Parse(rules.Element("min").Value),
-                        Max = int.Parse(rules.Element("max").Value)  
+                        Max = int.Parse(rules.Element("max").Value)
                     };
                     items.Add(lRule);
-                    //Console.WriteLine(items[0].Channel);
-                    
                 }
                 return items;
             }
-
         }
 
         public class Rule
@@ -103,51 +101,40 @@ namespace ApplicationAlarmSystem
 
         private void alarmsRules_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var selectedItem = (dynamic)alarmsRules.SelectedItems[0];
-            comboBoxChannel.SelectedValue = selectedItem.Channel;
-            txtMax.Text = Convert.ToString(selectedItem.Max);
-            txtMin.Text = Convert.ToString(selectedItem.Min);
-            //MessageBox.Show(selectedItem.Channel);
-            btnUpdate.IsEnabled = true;
-            btnDelete.IsEnabled = true;
-            btnCancel.IsEnabled = true;
-
+            if (alarmsRules.SelectedIndex > -1)
+            {
+                var selectedItem = (dynamic)alarmsRules.SelectedItems[0];
+                comboBoxChannel.SelectedValue = selectedItem.Channel;
+                txtMax.Text = Convert.ToString(selectedItem.Max);
+                txtMin.Text = Convert.ToString(selectedItem.Min);
+                //MessageBox.Show(selectedItem.Channel);
+                btnUpdate.IsEnabled = true;
+                btnDelete.IsEnabled = true;
+                btnCancel.IsEnabled = true;
+            }
         }
 
         private void updateListView()
         {
             //Se o ficheiro nao existir, cria um ficheiro XML
-
             //Carrega as lista para a listView
             List<Rule> RuleList = new List<Rule>();
             RuleList = DAL_OCUSMA.LoadOCUSMA();
             listas = RuleList;
             alarmsRules.ItemsSource = RuleList;
-
         }
 
         private void btnXML_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(@"alarmsRules.xml");
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (String.IsNullOrEmpty(txtMin.Text) || String.IsNullOrEmpty(txtMax.Text) || string.IsNullOrEmpty(comboBoxChannel.Text))
+            try
             {
-                MessageBox.Show("Por favor preenche.");               
+                System.Diagnostics.Process.Start("notepad", System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"alarmsRules.xml"));
             }
-            else {           
-            myxml.updateRules(comboBoxChannel.SelectedValue.ToString(), int.Parse(txtMin.Text), int.Parse(txtMax.Text));
-            updateListView();
-            comboBoxChannel.SelectedValue = null;
-            txtMax.Text = "";
-            txtMin.Text = "";
-            btnUpdate.IsEnabled = false;
-            btnDelete.IsEnabled = false;
-            btnCancel.IsEnabled = false;
+            catch (Exception)
+            {
+                MessageBox.Show("File not found!");
             }
-        }  
+        }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
@@ -173,6 +160,10 @@ namespace ApplicationAlarmSystem
             {
                 CreateAlarmPublisher();
                 starStopBtn.Content = STOP;
+                stateLb.Content = RUNNING;
+                logLst.Items.Add("Status Changed to: " + RUNNING);
+                logLst.Items.Add("Connected to Hub on: " + Properties.Settings.Default.IpAddressSub + ":" + Properties.Settings.Default.PortSub);
+                logLst.Items.Add("Publishing to address: " + Properties.Settings.Default.IpAddressPub + ":" + Properties.Settings.Default.PortPub);
                 disableHubConnSetts(false);
                 ThreadStart ts = new ThreadStart(ConsumeData);
                 threadData = new Thread(ts);
@@ -181,10 +172,13 @@ namespace ApplicationAlarmSystem
             else
             {
                 starStopBtn.Content = START;
+                stateLb.Content = STOPPED;
+                logLst.Items.Add("Status Changed to: " + STOPPED);
                 disableHubConnSetts(true);
                 threadData.Abort();
                 threadData = null;
                 DisposeConnections();
+                CancelAction();
             }
         }
 
@@ -207,7 +201,7 @@ namespace ApplicationAlarmSystem
         {
             dataSubContext = new ZContext();
             dataSubSocket = new ZSocket(dataSubContext, ZSocketType.SUB);
-            dataSubSocket.Connect("tcp://" + Properties.Settings.Default.IpAddress + ":" + Properties.Settings.Default.Port.ToString());
+            dataSubSocket.Connect("tcp://" + Properties.Settings.Default.IpAddressSub + ":" + Properties.Settings.Default.PortSub.ToString());
             dataSubSocket.SubscribeAll();
 
             while (true)
@@ -215,55 +209,44 @@ namespace ApplicationAlarmSystem
                 try
                 {
                     var frame = dataSubSocket.ReceiveFrame();
-                    //Console.WriteLine(frame.ReadString());
-                    //XmlDocument doc1 = new XmlDocument();
-                    //doc1.Load(frame.ReadString());
-                    //XmlNode _channelExist = doc1.no("channel");
                     XmlSerializer serializer = new XmlSerializer(typeof(Record));
                     Record record = (Record)serializer.Deserialize(new StringReader(frame.ReadString()));
 
                     this.Dispatcher.Invoke((Action)(() =>
                     {
-                        logLst.Items.Add(record.ToString());
-                        var zFrame = new ZFrame("Alarm!!!"); // Create a frame of the Xml
-                        logLst.Items.Add(zFrame.ToString());
-                        alarmPubSocket.Send(zFrame); //Send the Xml to subs
+                        for (int i = 0; i < listas.Count(); i++)
+                        {
+                            if (listas[i].Channel.Contains(record.Channel))
+                            {
+                                if (record.Value < listas[i].Min || record.Value > listas[i].Max)
+                                {
+                                    Console.WriteLine("Alert Generated on Channel:" + listas[i].Channel + ":" + listas[i].Min + "-" + listas[i].Max + "  Value:" + record.Value);
+                                    var alertFrame = new ZFrame("Alert on Channel: " + record.Channel + " with Value: " + record.Value + " | Rules Min: " + listas[i].Min + " Max: " + listas[i].Max); // Create a frame of the Xml
+                                    alarmPubSocket.Send(alertFrame);
+                                }
+                            }
+                        }
                     }));
-                    //Console.WriteLine("channel: " + record.Channel + " -> " + record.Value);
-                    //subscriber.Send(new ZFrame("asd"));
-
-
-                XmlSerializer serializer = new XmlSerializer(typeof(Record));
-                Record record = (Record)serializer.Deserialize(new StringReader(frame.ReadString()));
-                //Console.WriteLine("channel: " + record.Channel + " -> " + record.Value);
-                //subscriber.Send(new ZFrame("asd"));
-
-                //var lol = ((DataRowView)((ListView)sender).SelectedItem)["cislo_bytu"].ToString();
-                //Console.WriteLine(lol);
-
-                for (int i = 0; i < listas.Count(); i++)
-                {
-                    if (listas[i].Channel.Contains(record.Channel))
-                        if (listas[i].Min>record.Value||record.Value>listas[i].Max)
-                        {
-                            Console.WriteLine("Alerta canal:"+ listas[i].Channel + ":"+ listas[i].Min + "-" + listas[i].Max + "  Value:" + record.Value);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Canal:"+listas[i].Channel+"OK!");
-                        }
                 }
-
+                catch { }
             }
         }
 
          private void disableHubConnSetts(bool action)
         {
             saveBtn.IsEnabled = action;
-            addressTb.IsEnabled = action;
-            portTb.IsEnabled = action;
+            addressSubTb.IsEnabled = action;
+            portSubTb.IsEnabled = action;
             addressPubTb.IsEnabled = action;
             portPubTb.IsEnabled = action;
+            alarmsRules.IsEnabled = action;
+            comboBoxChannel.IsEnabled = action;
+            txtMin.IsEnabled = action;
+            txtMax.IsEnabled = action;
+            btnUpdate.IsEnabled = action;
+            btnDelete.IsEnabled = action;
+            btnCancel.IsEnabled = action;
+            AddBtn.IsEnabled = action;
         }
 
         public object ExitFrame(object f)
@@ -273,7 +256,6 @@ namespace ApplicationAlarmSystem
             return null;
         }
 
-        //verify if the digit isn't a integer
         private void txtMin_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             if (!char.IsDigit(e.Text, e.Text.Length - 1) )
@@ -294,16 +276,16 @@ namespace ApplicationAlarmSystem
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
             IPAddress ip;
-            if (!String.IsNullOrEmpty(addressTb.Text) && IPAddress.TryParse(addressTb.Text, out ip))
+            if (!String.IsNullOrEmpty(addressPubTb.Text) && IPAddress.TryParse(addressPubTb.Text, out ip))
             {
-                if (!String.IsNullOrEmpty(portTb.Text))
+                if (!String.IsNullOrEmpty(portPubTb.Text))
                 {
-                    if (!String.IsNullOrEmpty(addressPubTb.Text) && IPAddress.TryParse(addressPubTb.Text, out ip))
+                    if (!String.IsNullOrEmpty(addressSubTb.Text) && IPAddress.TryParse(addressSubTb.Text, out ip))
                     {
-                        if (!String.IsNullOrEmpty(portPubTb.Text))
+                        if (!String.IsNullOrEmpty(portSubTb.Text))
                         {
-                            Properties.Settings.Default.IpAddress = addressTb.Text;
-                            Properties.Settings.Default.Port = Convert.ToInt32(portTb.Text);
+                            Properties.Settings.Default.IpAddressSub = addressSubTb.Text;
+                            Properties.Settings.Default.PortSub = Convert.ToInt32(portSubTb.Text);
                             Properties.Settings.Default.IpAddressPub = addressPubTb.Text;
                             Properties.Settings.Default.PortPub = Convert.ToInt32(portPubTb.Text);
                             Properties.Settings.Default.Save();
@@ -324,17 +306,16 @@ namespace ApplicationAlarmSystem
                 else
                 {
                     MessageBox.Show("Invalid Publisher Port!");
-                    portTb.Text = Properties.Settings.Default.Port.ToString();
+                    portPubTb.Text = Properties.Settings.Default.PortSub.ToString();
                 }
             }
             else
             {
                 MessageBox.Show("Empty or Invalid Publisher Ip Address!");
-                addressTb.Text = Properties.Settings.Default.IpAddress;
+                addressPubTb.Text = Properties.Settings.Default.IpAddressSub;
             }
         }
 
-        //restrict the copy+cut+paste
         private void HandleCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
 
@@ -345,7 +326,6 @@ namespace ApplicationAlarmSystem
                 e.CanExecute = false;
                 e.Handled = true;
             }
-
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -381,6 +361,64 @@ namespace ApplicationAlarmSystem
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrEmpty(txtMin.Text) || String.IsNullOrEmpty(txtMax.Text) || string.IsNullOrEmpty(comboBoxChannel.Text))
+            {
+                MessageBox.Show("Empty or Invalid rules!");
+            }
+            else
+            {
+                myxml.updateRules(comboBoxChannel.SelectedValue.ToString(), int.Parse(txtMin.Text), int.Parse(txtMax.Text));
+                updateListView();
+                CancelAction();
+            }
+        }
+
+        private void CancelAction()
+        {
+            comboBoxChannel.SelectedValue = null;
+            txtMax.Text = "";
+            txtMin.Text = "";
+            btnUpdate.IsEnabled = false;
+            btnDelete.IsEnabled = false;
+            btnCancel.IsEnabled = false;
+        }
+
+        private void logBtn_Click(object sender, RoutedEventArgs e)
+        {
+            logLst.Items.Clear();
+        }
+
+        private void AddBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (listas.Count < 3)
+            {
+                if (comboBoxChannel.SelectedIndex > 0)
+                {
+                    if (myxml.checkChannelExists(comboBoxChannel.Text))
+                    {
+                        MessageBox.Show("Only One Rule Per Channel!");
+                    }
+                    else
+                    {
+                        myxml.updateRules(comboBoxChannel.SelectedValue.ToString(), 0, 0);
+                        updateListView();
+                        CancelAction();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Select a Channel!");
+                }
+            }
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            CancelAction();
         }
     }
 }

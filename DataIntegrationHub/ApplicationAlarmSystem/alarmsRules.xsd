@@ -6,9 +6,9 @@
         <xs:element maxOccurs="unbounded" name="Rule">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="channel" type="xs:string" nillable="0" />
-              <xs:element name="min" type="xs:unsignedByte" nillable="0" />
-              <xs:element name="max" type="xs:unsignedByte" nillable="0" />
+              <xs:element name="channel" type="xs:string" />
+              <xs:element name="min" type="xs:unsignedByte" />
+              <xs:element name="max" type="xs:unsignedByte" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

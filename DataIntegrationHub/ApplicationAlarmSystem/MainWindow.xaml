@@ -10,6 +10,7 @@
         <Grid Grid.Row="0">
             <Label Content="Channel:" HorizontalAlignment="Left" Margin="321,137,0,0" VerticalAlignment="Top"/>
             <ComboBox x:Name="comboBoxChannel" HorizontalAlignment="Left" Margin="385,137,0,0" VerticalAlignment="Top" Width="120" SelectedValuePath="Content">
+                <ComboBoxItem Content=""/>
                 <ComboBoxItem Content="H"/>
                 <ComboBoxItem Content="P"/>
                 <ComboBoxItem Content="T"/>
@@ -18,8 +19,8 @@
             <Label Content="Maximum:" HorizontalAlignment="Left" Margin="312,199,0,0" VerticalAlignment="Top"/>
             <TextBox x:Name="txtMin" HorizontalAlignment="Left" Height="23" Margin="385,171,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" PreviewTextInput="txtMin_PreviewTextInput"/>
             <TextBox x:Name="txtMax" HorizontalAlignment="Left" Height="23" Margin="385,199,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" PreviewTextInput="txtMax_PreviewTextInput"/>
-            <Button Content="Update" HorizontalAlignment="Left" Margin="327,246,0,0" VerticalAlignment="Top" Width="56" Click="Button_Click"/>
-            <Button Content="Cancel" HorizontalAlignment="Left" Margin="449,246,0,0" VerticalAlignment="Top" Width="56"/>
+            <Button Name="btnUpdate" Content="Update" HorizontalAlignment="Left" Margin="327,246,0,0" VerticalAlignment="Top" Width="56" Click="btnUpdate_Click"/>
+            <Button Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="449,246,0,0" VerticalAlignment="Top" Width="56" Click="btnCancel_Click"/>
             <ListView x:Name="alarmsRules" HorizontalAlignment="Left" Height="100" Margin="10,137,0,0" VerticalAlignment="Top" Width="289" Cursor="No" PreviewMouseDoubleClick="alarmsRules_PreviewMouseDoubleClick">
                 <ListView.View>
                     <GridView>
@@ -30,11 +31,11 @@
                 </ListView.View>
             </ListView>
             <Button x:Name="btnXML" Content="Open XML" HorizontalAlignment="Left" Margin="10,246,0,0" VerticalAlignment="Top" Width="75" Click="btnXML_Click"/>
-            <Button Content="Delete" HorizontalAlignment="Left" Margin="388,246,0,0" VerticalAlignment="Top" Width="56" RenderTransformOrigin="0.16,0.6" Click="Button_Click_1"/>
+            <Button Name="btnDelete" Content="Delete" HorizontalAlignment="Left" Margin="388,246,0,0" VerticalAlignment="Top" Width="56" RenderTransformOrigin="0.16,0.6" Click="Button_Click_1"/>
             <Button x:Name="starStopBtn" Content="Start" HorizontalAlignment="Left" Margin="455,84,0,0" VerticalAlignment="Top" Width="50" Click="starStopBtn_Click" Height="23" />
-            <TextBox Name="addressTb" HorizontalAlignment="Left" Height="23" Margin="65,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-            <TextBox Name="portTb" HorizontalAlignment="Left" Height="23" Margin="224,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
-            <Label Content="Hub Connection (Subscriber):" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Top" Height="26" Width="159"/>
+            <TextBox Name="addressSubTb" HorizontalAlignment="Left" Height="23" Margin="65,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <TextBox Name="portSubTb" HorizontalAlignment="Left" Height="23" Margin="224,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
+            <Label Content="Hub Connection (Data Subscriber):" HorizontalAlignment="Left" Margin="6,10,0,0" VerticalAlignment="Top" Height="26" Width="195"/>
             <Label Content="Address:" HorizontalAlignment="Left" Margin="6,36,0,0" VerticalAlignment="Top" Height="23"/>
             <Label Content="Port:" HorizontalAlignment="Left" Margin="191,36,0,0" VerticalAlignment="Top" Height="23"/>
             <Label Content="Alarm Rules:" HorizontalAlignment="Left" Margin="6,112,0,0" VerticalAlignment="Top" Height="23"/>
@@ -42,15 +43,17 @@
             <Separator HorizontalAlignment="Left" Height="5" Margin="10,111,0,0" VerticalAlignment="Top" Width="495"/>
             <Separator HorizontalAlignment="Left" Height="5" Margin="10,373,0,0" VerticalAlignment="Top" Width="495"/>
             <CheckBox Content="Start On App StartUp" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,379,0,0"/>
-            <CheckBox Content="Minimize to tray" HorizontalAlignment="Left" Margin="147,379,0,0" VerticalAlignment="Top" Height="15" Width="132" IsChecked="True"/>
-            <Label Content="Hub Connection (Publisher):" HorizontalAlignment="Left" Margin="6,59,0,0" VerticalAlignment="Top" Height="26" Width="159"/>
+            <Label Content="Hub Connection (Alarm Publisher):" HorizontalAlignment="Left" Margin="6,59,0,0" VerticalAlignment="Top" Height="26" Width="195"/>
             <TextBox x:Name="addressPubTb" HorizontalAlignment="Left" Height="23" Margin="65,83,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
             <TextBox x:Name="portPubTb" HorizontalAlignment="Left" Height="23" Margin="224,83,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="61"/>
             <Label Content="Address:" HorizontalAlignment="Left" Margin="6,83,0,0" VerticalAlignment="Top" Height="23"/>
             <Label Content="Port:" HorizontalAlignment="Left" Margin="191,83,0,0" VerticalAlignment="Top" Height="23"/>
+            <Button x:Name="AddBtn" Content="Add" HorizontalAlignment="Left" Margin="266,246,0,0" VerticalAlignment="Top" Width="56" Click="AddBtn_Click"/>
+            <Label Content="Status: " HorizontalAlignment="Left" Margin="396,56,0,0" VerticalAlignment="Top" Height="23"/>
+            <Label Name="stateLb" Content="Stopped" HorizontalAlignment="Left" Margin="437,56,0,0" VerticalAlignment="Top" Height="28"/>
         </Grid>
         <Label Content="Event Log:" HorizontalAlignment="Left" Margin="5,272,0,0" VerticalAlignment="Top" Height="26" Width="65"/>
-        <Button Content="Clear Log" HorizontalAlignment="Left" Margin="441,297,0,0" VerticalAlignment="Top" Width="64" Height="20"/>
+        <Button Name="logBtn" Content="Clear Log" HorizontalAlignment="Left" Margin="441,297,0,0" VerticalAlignment="Top" Width="64" Height="20" Click="logBtn_Click"/>
         <ListBox Name="logLst" HorizontalAlignment="Left" Height="69" VerticalAlignment="Top" Width="426" Margin="10,297,0,0"/>
     </Grid>
 </Window>
