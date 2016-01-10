@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="4508680c-a223-4f56-94d2-54ebf0a1a90f" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:3291/DataIntegrationService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="DataIntegrationService.wsdl" MetadataType="Wsdl" ID="a9717b44-1a9f-4c0e-bf5b-8387c4b58e4a" SourceId="1" SourceUrl="http://localhost:3291/DataIntegrationService.svc?wsdl" />
+    <MetadataFile FileName="DataIntegrationService.disco" MetadataType="Disco" ID="d4705ed2-e472-4fcc-9297-d01d558a321d" SourceId="1" SourceUrl="http://localhost:3291/DataIntegrationService.svc?disco" />
+    <MetadataFile FileName="DataIntegrationService1.xsd" MetadataType="Schema" ID="1c4e3e10-33a3-47ee-97ae-f70bb9f84106" SourceId="1" SourceUrl="http://localhost:3291/DataIntegrationService.svc?xsd=xsd2" />
+    <MetadataFile FileName="DataIntegrationService3.xsd" MetadataType="Schema" ID="35969450-3f12-4303-8e10-7a8d1ac6e8ed" SourceId="1" SourceUrl="http://localhost:3291/DataIntegrationService.svc?xsd=xsd3" />
+    <MetadataFile FileName="DataIntegrationService.xsd" MetadataType="Schema" ID="f88fa0ed-4c22-49b9-89fc-e67b4b160d7e" SourceId="1" SourceUrl="http://localhost:3291/DataIntegrationService.svc?xsd=xsd0" />
+    <MetadataFile FileName="DataIntegrationService2.xsd" MetadataType="Schema" ID="53bde099-d915-41c1-8008-2fb1bb3d64d0" SourceId="1" SourceUrl="http://localhost:3291/DataIntegrationService.svc?xsd=xsd1" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

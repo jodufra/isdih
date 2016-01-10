@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html ng-app="ang-app">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link type="text/css" rel="stylesheet" href="~/Content/import/vendors/animate-css/animate.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/Content/app/js/plugins/sweetalert/sweetalert.css" />
+    <link type="text/css" rel="stylesheet" href="~/Content/import/vendors/material-icons/material-design-iconic-font.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/Content/import/vendors/socicon/socicon.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/Content/import/css/app.min.1.css" />
+    <link type="text/css" rel="stylesheet" href="~/Content/import/css/app.min.2.css" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link type="text/css" rel="stylesheet" href="~/Content/app/css/styles.css" />
+</head>
+<body id="si" ng-controller="mainController">
+    <header id="header">
+        <ul class="header-inner clearfix">
+            <li class="logo hidden-xs">
+                <a href="/">
+                    <img src="~/Content/app/imgs/logo.PNG" />
+                </a>
+            </li>
+        </ul>
+    </header>
+    <section class="main">
+        <section id="content" class="ng-hide" ng-hide="isContentLoading">
+            <div class="relative">
+                <div>@RenderBody()</div>
+            </div>
+        </section>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; @DateTime.Now.Year - @ViewBag.Title</p>
+        </div>
+    </footer>
+    <script type="text/javascript" src="~/Content/import/js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="~/Content/import/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Content/app/js/plugins/angular/angular.min.js"></script>
+    <script type="text/javascript" src="~/Content/import/vendors/moment/moment.min.js"></script>
+    <script type="text/javascript" src="~/Content/import/vendors/nicescroll/jquery.nicescroll.min.js"></script>
+    <script type="text/javascript" src="~/Content/import/vendors/waves/waves.min.js"></script>
+    <script type="text/javascript" src="~/Content/import/vendors/bootstrap-growl/bootstrap-growl.min.js"></script>
+    <script type="text/javascript" src="~/Content/import/vendors/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="~/Content/app/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="~/Content/import/vendors/chosen/chosen.jquery.min.js"></script>
+    <script type="text/javascript" src="~/Content/import/vendors/flot/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="~/Content/import/vendors/flot/jquery.flot.time.min.js"></script>
+    <script type="text/javascript" src="~/Content/app/js/layout.js"></script>
+    <script type="text/javascript" src="~/Content/app/js/app.js"></script>
+    <script type="text/javascript" src="~/Content/app/js/graph.ctrl.js"></script>
+    <script type="text/javascript" src="~/Content/app/js/multiple-graph.ctrl.js"></script>
+</body>
+</html>

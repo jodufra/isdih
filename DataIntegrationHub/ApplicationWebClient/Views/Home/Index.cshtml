@@ -1,0 +1,77 @@
+﻿<section class="jumbotron" ng-controller="graphController" ng-init="init('#graph-global','#graph-global-wrapper');">
+    <div class="container">
+        <h1>
+            <span>{{ channel == "H" ? "Humidity " : channel == "P" ? "Pressure " : channel == "T" ? "Temperature " : "" }} Recent History</span>
+            <button ng-click="load();" class="btn btn-sm btn-info waves-effect waves-button waves-float pull-right"><i class="md md-refresh"></i></button>
+        </h1>
+        <div class="row ">
+            <div class="col-md-2">
+                <div class="form-group fg-line">
+                    <label>Channel</label>
+                    <select data-plugin="select" class="chosen text-center" name="Channel" ng-model="channel" ng-change="updateGraph();">
+                        <option value="T" selected="selected">Temperature</option>
+                        <option value="P">Pressure</option>
+                        <option value="H">Humidity</option>
+                    </select>
+                </div>
+                <div class="form-group fg-line">
+                    <label>Timespan</label>
+                    <select data-plugin="select" class="chosen text-center" name="Span" ng-model="span" ng-change="load();">
+                        <option value="d">Last 24 hours</option>
+                        <option value="w">Last 7 days</option>
+                        <option value="m" selected="selected">Last 30 days</option>
+                    </select>
+                </div>
+                <div class="form-group fg-line" ng-show="hasResults">
+                    <label>Statistics</label>
+                    <div>
+                        <a href="/Home/Statistics/?channels={{channel}}&span={{span}}" target="_blank" style="display:block" ng-class="channel == 'H' ? 'btn-info' : channel == 'P' ? 'btn-success' : channel == 'T' ? 'btn-warning' : ''" class="btn waves-effect waves-button waves-float text-center btn-block">{{ channel == "H" ? "Humidity " : channel == "P" ? "Pressure " : channel == "T" ? "Temperature " : "" }} <i class="md md-file-download"></i></a>
+                    </div>
+                    <div style="padding-top:5px;">
+                        <a href="/Home/Statistics/?channels=T&channels=P&channels=H&span={{span}}" target="_blank" style="display:block" class="btn btn-default waves-effect waves-button waves-float btn-block text-center">All Channels <i class="md md-file-download"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div id="graph-global-wrapper" class="col-md-10 text-center">
+                <div ng-show="isLoading"><img src="~/Content/app/imgs/small-loader-3.gif" alt="Loading" /></div>
+                <div ng-hide="hasResults || isLoading" style="padding-top:25px;"><h5>No results found</h5></div>
+                <div ng-show="hasResults" id="graph-global" style="height:350px;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="relative clearfix text-center container">
+    <div class="row text-left">
+        <h1>
+            Todays History <small>(@(DateTime.Now.ToShortDateString()))</small>
+            <button ng-click="load();" style="margin-top: 18px;" class="btn btn-sm btn-info waves-effect waves-button waves-float pull-right"><i class="md md-refresh"></i></button>
+        </h1>
+    </div>
+    <div class="row" ng-controller="multipleGraphController" ng-init="init();">
+        <div class="col-md-4">
+            <h2 style="display:inline-block">Temperature<small> ºC</small></h2>
+            <div id="graph-T-wrapper">
+                <div ng-show="isLoading"><img src="~/Content/app/imgs/small-loader-3.gif" alt="Loading" /></div>
+                <div ng-hide="hasTResults || isLoading" style="padding-top:25px;"><h5>No results found</h5></div>
+                <div ng-show="hasTResults" id="graph-T" style="height:350px;"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h2 style="display:inline-block">Pressure<small> bar</small></h2>
+            <div id="graph-P-wrapper">
+                <div ng-show="isLoading"><img src="~/Content/app/imgs/small-loader-3.gif" alt="Loading" /></div>
+                <div ng-hide="hasPResults || isLoading" style="padding-top:25px;"><h5>No results found</h5></div>
+                <div ng-show="hasPResults" id="graph-P" style="height:350px;"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h2 style="display:inline-block">Humidity<small> %</small></h2>
+            <div id="graph-H-wrapper">
+                <div ng-show="isLoading"><img src="~/Content/app/imgs/small-loader-3.gif" alt="Loading" /></div>
+                <div ng-hide="hasHResults || isLoading" style="padding-top:25px;"><h5>No results found</h5></div>
+                <div ng-show="hasHResults" id="graph-H" style="height:350px;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+

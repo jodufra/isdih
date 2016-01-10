@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ApplicationWebService" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ApplicationWebService" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="QueryTimeSpan">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LastHours" />
+      <xs:enumeration value="LastWeek" />
+      <xs:enumeration value="LastMonth" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="QueryTimeSpan" nillable="true" type="tns:QueryTimeSpan" />
+  <xs:complexType name="ArrayOfRecord">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Record" nillable="true" type="tns:Record" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfRecord" nillable="true" type="tns:ArrayOfRecord" />
+  <xs:complexType name="Record">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Channel" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DateCreated" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IdRecord" type="xs:int" />
+      <xs:element minOccurs="0" name="NodeId" type="xs:int" />
+      <xs:element minOccurs="0" name="Value" type="xs:float" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Record" nillable="true" type="tns:Record" />
+  <xs:simpleType name="QueryGroupFunction">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Average" />
+      <xs:enumeration value="Min" />
+      <xs:enumeration value="Max" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="QueryGroupFunction" nillable="true" type="tns:QueryGroupFunction" />
+  <xs:complexType name="ArrayOfRecordStatistic">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="RecordStatistic" nillable="true" type="tns:RecordStatistic" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfRecordStatistic" nillable="true" type="tns:ArrayOfRecordStatistic" />
+  <xs:complexType name="RecordStatistic">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Channel" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Date" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Value" type="xs:float" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RecordStatistic" nillable="true" type="tns:RecordStatistic" />
+</xs:schema>

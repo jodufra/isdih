@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:3291/DataIntegrationService.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://localhost:3291/DataIntegrationService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/ApplicationWebService" />
+  <xs:element name="GetRecordsByChannelAndDatespan">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="channels" nillable="true" type="q1:ArrayOfstring" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/ApplicationWebService" minOccurs="0" name="datespan" type="q2:QueryTimeSpan" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRecordsByChannelAndDatespanResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/ApplicationWebService" minOccurs="0" name="GetRecordsByChannelAndDatespanResult" nillable="true" type="q3:ArrayOfRecord" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRecordsByDataRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="dateMin" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="dateMax" type="xs:dateTime" />
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/ApplicationWebService" minOccurs="0" name="groupFunction" type="q4:QueryGroupFunction" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetRecordsByDataRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/ApplicationWebService" minOccurs="0" name="GetRecordsByDataRangeResult" nillable="true" type="q5:ArrayOfRecordStatistic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

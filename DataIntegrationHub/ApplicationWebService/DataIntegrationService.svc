@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="ApplicationWebService.DataIntegrationService" CodeBehind="DataIntegrationService.svc.cs" %>

@@ -21,7 +21,7 @@ namespace ApplicationDbLibrary.Entities.Context
         }
 
 
-        private readonly bool SEED_SAMPLE_DATA = true; /* May take a long to complete */
+        private readonly bool SEED_SAMPLE_DATA = false; /* May take a long to complete */
 
         protected override void Seed(AppDbContext context)
         {
@@ -35,7 +35,7 @@ namespace ApplicationDbLibrary.Entities.Context
             #region Seeds
             var mh = new MigrationHelper();
             Record[] records = new Record[1095];
-            var date = new DateTime(2015, 1, 1, 0, 0, 0);
+            var date = new DateTime(2015, 1, 22);
             int j = 0;
             for (int i = 0; i < 1095; j++, i++)
             {
