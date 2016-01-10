@@ -26,24 +26,48 @@ namespace ApplicationAlarmSystem.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
-        public string IpAddress {
+        public string IpAddressSub {
             get {
-                return ((string)(this["IpAddress"]));
+                return ((string)(this["IpAddressSub"]));
             }
             set {
-                this["IpAddress"] = value;
+                this["IpAddressSub"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5556")]
-        public int Port {
+        public int PortSub {
             get {
-                return ((int)(this["Port"]));
+                return ((int)(this["PortSub"]));
             }
             set {
-                this["Port"] = value;
+                this["PortSub"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        public string IpAddressPub {
+            get {
+                return ((string)(this["IpAddressPub"]));
+            }
+            set {
+                this["IpAddressPub"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5557")]
+        public int PortPub {
+            get {
+                return ((int)(this["PortPub"]));
+            }
+            set {
+                this["PortPub"] = value;
             }
         }
     }

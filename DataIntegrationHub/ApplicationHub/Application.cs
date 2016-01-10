@@ -49,7 +49,7 @@ namespace ApplicationHub
 
                         break;
                     case 2:
-                        OpSM = MenuSettings(Delay, IpAddress, Port);
+                        OpSM = MenuSettings();
                         Ignore = false;
                         do{
                             switch (OpSM)
@@ -81,10 +81,10 @@ namespace ApplicationHub
                                     string TempIp;
                                     do
                                     {
-                                        Console.Write("->Set Ip Address: ");
+                                        Console.Write("->Set Pub Ip Address: ");
                                         TempIp = Console.ReadLine().ToString();
 
-                                        if (!string.IsNullOrEmpty(TempIp) && !IPAddress.TryParse(TempIp, out Ip)) Console.WriteLine(">Invalid Ip Address!");
+                                        if (!string.IsNullOrEmpty(TempIp) && !IPAddress.TryParse(TempIp, out Ip)) Console.WriteLine(">Invalid Pub Ip Address!");
                                     } while (!string.IsNullOrEmpty(TempIp) && !IPAddress.TryParse(TempIp, out Ip));
 
                                     //Save Setting
@@ -93,8 +93,7 @@ namespace ApplicationHub
 
                                     if (CHController != null)
                                         CHController.ResetPublisher();
-                                    
-                                    IpAddress = TempIp;
+
                                     Ignore = true;
                                     OpSM = 0;
                                     break;
@@ -102,12 +101,51 @@ namespace ApplicationHub
                                     bool convert2 = false;
                                     do
                                     {
-                                        Console.Write("->Set Port number: ");
+                                        Console.Write("->Set Pub Port number: ");
                                         convert2 = Int32.TryParse(Console.ReadLine(), out Port);
                                     } while (convert2 == false);
 
                                     //Save Setting
                                     Properties.Settings.Default.Port = Port;
+                                    Properties.Settings.Default.Save();
+
+                                    if (CHController != null)
+                                        CHController.ResetPublisher();
+
+                                    Ignore = true;
+                                    OpSM = 0;
+                                    break;
+                                case 4:
+                                    IPAddress Ip2;
+                                    string TempIp2;
+                                    do
+                                    {
+                                        Console.Write("->Set Sub Ip Address: ");
+                                        TempIp2 = Console.ReadLine().ToString();
+
+                                        if (!string.IsNullOrEmpty(TempIp2) && !IPAddress.TryParse(TempIp2, out Ip2)) Console.WriteLine(">Invalid Sub Ip Address!");
+                                    } while (!string.IsNullOrEmpty(TempIp2) && !IPAddress.TryParse(TempIp2, out Ip2));
+
+                                    //Save Setting
+                                    Properties.Settings.Default.IpAddressSub = TempIp2;
+                                    Properties.Settings.Default.Save();
+
+                                    if (CHController != null)
+                                        CHController.ResetPublisher();
+
+                                    Ignore = true;
+                                    OpSM = 0;
+                                    break;
+                                case 5:
+                                    bool convert3 = false;
+                                    do
+                                    {
+                                        Console.Write("->Set Sub Port number: ");
+                                        convert3 = Int32.TryParse(Console.ReadLine(), out Port);
+                                    } while (convert3 == false);
+
+                                    //Save Setting
+                                    Properties.Settings.Default.PortSub = Port;
                                     Properties.Settings.Default.Save();
 
                                     if (CHController != null)
@@ -139,7 +177,7 @@ namespace ApplicationHub
                 Console.WriteLine("[0] Terminate");
                 if (!String.IsNullOrEmpty(zeroMqInitError))
                 {
-                    Console.WriteLine(zeroMqInitError + " The ZeroMQ dll's are missing, unable to start!");
+                    Console.WriteLine(" The ZeroMQ dll's are missing from you windows directory, unable to start!");
                 }
                 Int32.TryParse(Console.ReadLine(), out op);
             } while (op != 1 && op != 2 && op != 0);
@@ -147,19 +185,23 @@ namespace ApplicationHub
             return op;
         }
 
-        private static int MenuSettings(int Delay, string Ip, int Port)
+        private static int MenuSettings()
         {
             int op;
             do
             {
                 Console.Clear();
                 Console.WriteLine("-------- Settings --------");
-                Console.WriteLine("[1] Set Delay: " + (Delay == 0 ? "<Not Defined>" : Delay.ToString()));
-                Console.WriteLine("[2] Set Ip Address: " + (string.IsNullOrEmpty(Ip) ? "<Not Defined>" : Ip));
-                Console.WriteLine("[3] Set Port: " + (Port == 0 ? "<Not Defined>" : Port.ToString()));
+                Console.WriteLine("[1] Set Delay: " + Properties.Settings.Default.Delay);
+                Console.WriteLine("#For Sending Sensor Data");
+                Console.WriteLine("[2] Set Pub Ip Address: " + Properties.Settings.Default.IpAddress);
+                Console.WriteLine("[3] Set Pub Port: " + Properties.Settings.Default.Port);
+                Console.WriteLine("#For Receiving Alarm Data");
+                Console.WriteLine("[4] Set Sub Ip Address: " + Properties.Settings.Default.IpAddressSub);
+                Console.WriteLine("[5] Set Sub Port: " + Properties.Settings.Default.PortSub);
                 Console.WriteLine("[0] exit");
                 Int32.TryParse(Console.ReadLine(), out op);
-            } while (op != 1 && op != 2 && op != 3 && /*op != 4 &&*/ op != 0);
+            } while (op != 1 && op != 2 && op != 3 && op != 4 && op != 5  && op != 0);
 
             return op;
         }

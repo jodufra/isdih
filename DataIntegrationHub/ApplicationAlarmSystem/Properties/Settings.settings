@@ -2,11 +2,17 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ApplicationAlarmSystem.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="IpAddress" Type="System.String" Scope="User">
+    <Setting Name="IpAddressSub" Type="System.String" Scope="User">
       <Value Profile="(Default)">127.0.0.1</Value>
     </Setting>
-    <Setting Name="Port" Type="System.Int32" Scope="User">
+    <Setting Name="PortSub" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5556</Value>
+    </Setting>
+    <Setting Name="IpAddressPub" Type="System.String" Scope="User">
+      <Value Profile="(Default)">127.0.0.1</Value>
+    </Setting>
+    <Setting Name="PortPub" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5557</Value>
     </Setting>
   </Settings>
 </SettingsFile>

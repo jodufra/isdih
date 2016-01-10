@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -45,11 +46,32 @@ namespace ApplicationAlarmSystem
 
             //root.AppendChild(rule);
 
-            
-            
+            doc.Save(@"alarmsRules.xml");
+        }
+
+        public void CreateXMLRule()
+        {
+
+            XmlDocument doc = new XmlDocument();
+            XmlDeclaration dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
+            doc.AppendChild(dec);
+
+            //Create the root element
+            XmlElement root = doc.CreateElement("Rules");
+            doc.AppendChild(root);
+
+            //Create Rules
+            //XmlElement rule = doc.CreateElement("Rule");
+            //rule.SetAttributeNode("2");
+            //doc.CreateElement(".CreateNavigator("type", "T");
+            //rule.SetAttribute("min", "0");
+            //rule.SetAttribute("max", "20");
+
+            //root.AppendChild(rule);
 
             doc.Save(@"alarmsRules.xml");
         }
+
         public void deleteRules(string channel)
         {
             XmlDocument doc1 = new XmlDocument();
@@ -104,6 +126,22 @@ namespace ApplicationAlarmSystem
         }
 
 
+        public bool checkChannelExists(string channel)
+        {
+            XmlDocument doc1 = new XmlDocument();
+            doc1.Load(_xmlfilepath);
+            XmlNode _channelExist = doc1.SelectSingleNode("/Rules/Rule[channel='" + channel + "']");
+
+            if (_channelExist == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public bool validateXml()
         {
             _isvalid = true;
@@ -111,6 +149,7 @@ namespace ApplicationAlarmSystem
             if (!File.Exists(_xmlfilepath))
             {
                 FileStream Fs = new FileStream(_xmlfilepath, FileMode.CreateNew);
+                Fs.Close();
             }
 
             XmlDocument doc = new XmlDocument();
@@ -119,7 +158,13 @@ namespace ApplicationAlarmSystem
             {
                 doc.Load(_xmlfilepath);
                 ValidationEventHandler eventHandler = new ValidationEventHandler(MyEvent);
-                doc.Schemas.Add(null, _xsdfilepath);
+                //doc.Schemas.Add(null, );//_xsdfilepath
+                Assembly myAssembly = Assembly.GetExecutingAssembly();
+                using (Stream schemaStream = myAssembly.GetManifestResourceStream("ApplicationAlarmSystem.alarmsRules.xsd"))
+                {
+                    XmlSchema schema = XmlSchema.Read(schemaStream, null);
+                    doc.Schemas.Add(schema);
+                }
                 doc.Validate(eventHandler);
             }
             catch (XmlException ex)

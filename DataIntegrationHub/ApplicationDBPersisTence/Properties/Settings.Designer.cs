@@ -46,5 +46,43 @@ namespace ApplicationDBPersisTence.Properties {
                 this["Port"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("server=70a908ac-7d83-4d2f-9498-a5860145a346.mysql.sequelizer.com;database=db70a90" +
+            "8ac7d834d2f9498a5860145a346;uid=heyyckzsninuqzcy;pwd=GDmXLqBTSYUfFJKMAk3oejtqPvB" +
+            "qKnTVXEqpLAuaPnopLXj4RZuBdZ3wk4ipWmiD")]
+        public string ConnectionStringOriginal {
+            get {
+                return ((string)(this["ConnectionStringOriginal"]));
+            }
+            set {
+                this["ConnectionStringOriginal"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ConnectionStringChanged {
+            get {
+                return ((string)(this["ConnectionStringChanged"]));
+            }
+            set {
+                this["ConnectionStringChanged"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastRecordId {
+            get {
+                return ((string)(this["LastRecordId"]));
+            }
+            set {
+                this["LastRecordId"] = value;
+            }
+        }
     }
 }

@@ -18,15 +18,13 @@ namespace ApplicationHub
     public class CommunicationHubController : IDisposable
     {
         public static CommunicationHubController Instance;
-        private ZContext Context;
-        private ZSocket PublisherSocket;
-        private SensorDataController SDataCollector;
-        //private XmlDocument Doc;
-        //private String XmlName;
-        //private String CurrentDate;
-        //private XmlElement Root;
-        private bool Disposed;
-
+        private ZContext dataPubContext;
+        private ZSocket dataPubSocket;
+        private ZContext alarmSubContext;
+        private ZSocket alarmSubSocket;
+        private SensorDataController sDataCollector;
+        private bool disposed;
+        private Thread thread;
 
         public static CommunicationHubController CreateInstance()
         {
@@ -37,63 +35,101 @@ namespace ApplicationHub
         private CommunicationHubController()
         { 
             CreatePublisher();
-            SDataCollector = SensorDataController.CreateInstance();
+            CreateSubscriver();
+            sDataCollector = SensorDataController.CreateInstance();
+        }
+
+        private void CreatePublisher()
+        {
+            dataPubContext = new ZContext();
+            dataPubSocket = new ZSocket(dataPubContext, ZSocketType.PUB);
+            dataPubSocket.Bind("tcp://" + Properties.Settings.Default.IpAddress + ":" + Properties.Settings.Default.Port);
+        }
+
+        private void CreateSubscriver()
+        {
+            ThreadStart ts = new ThreadStart(ConsumeAlarms);
+            thread = new Thread(ts);
+            thread.Start();
+        }
+
+        private void ConsumeAlarms()
+        {
+            alarmSubContext = new ZContext();
+            alarmSubSocket = new ZSocket(alarmSubContext, ZSocketType.SUB);
+            alarmSubSocket.Connect("tcp://" + Properties.Settings.Default.IpAddressSub + ":" + Properties.Settings.Default.PortSub);
+            alarmSubSocket.SubscribeAll();
+
+            while(true){
+                try {
+                    var alarmFrame = alarmSubSocket.ReceiveFrame(); //Receiving alarm, but no use!
+                    Console.WriteLine(alarmFrame.ToString()); //Debug ###Remover
+                }
+                catch { }
+            }
         }
 
         public void OnSensorDataReceived(Record record)
         {
-            if (Context != null)
+            if (dataPubContext != null)
             {
-                //Record is converted into Xml to be sent to Subscribers 
-                XmlSerializer Serializer = new XmlSerializer(typeof(Record));
-                StringWriter SWriter = new StringWriter();
-                XmlWriter XmlWriter = XmlWriter.Create(SWriter);
-                XmlSerializerNamespaces Ns = new XmlSerializerNamespaces();
-                Ns.Add("", "");
-                Record RecordToSend = record;
-                Serializer.Serialize(SWriter, RecordToSend, Ns);
-                var XmlString = SWriter.ToString(); // Record To XML
+                try { 
+                    //Record is converted into Xml to be sent to Subscribers 
+                    XmlSerializer Serializer = new XmlSerializer(typeof(Record));
+                    StringWriter SWriter = new StringWriter();
+                    XmlWriter XmlWriter = XmlWriter.Create(SWriter);
+                    XmlSerializerNamespaces Ns = new XmlSerializerNamespaces();
+                    Ns.Add("", "");
+                    Record RecordToSend = record;
+                    Serializer.Serialize(SWriter, RecordToSend, Ns);
+                    var XmlString = SWriter.ToString(); // Record To XML
 
-                var ZFrame = new ZFrame(XmlString); // Create a frame of the Xml
-                PublisherSocket.Send(ZFrame); //Send the Xml to subs
+                    var zFrame = new ZFrame(XmlString); // Create a frame of the Xml
+                    dataPubSocket.Send(zFrame); //Send the Xml to subs
                
-                //Console.WriteLine(XmlString); //Debug
-                //Console.WriteLine("Receibed from sensor: " + record.Log);
-                XmlWriter.Close();
-                XmlWriter.Dispose();
-                SWriter.Close();
-                SWriter.Dispose();
+                    //Console.WriteLine(XmlString); //Debug ###Remover
+                    XmlWriter.Close();
+                    XmlWriter.Dispose();
+                    SWriter.Close();
+                    SWriter.Dispose();
+                    zFrame.Dispose();
+                }
+                catch { }
             }
         }
 
         public bool StopSensor()
         {
-            return SDataCollector.StopStart();
+            thread.Abort();
+            thread = null;
+            DisposeConnections();
+            return sDataCollector.StopStart();
         }
 
         public bool StartSensor()
         {
-            return SDataCollector.StopStart();
+            CreatePublisher();
+            CreateSubscriver();
+            return sDataCollector.StopStart();
+        }
+
+        private void DisposeConnections()
+        {
+            dataPubSocket.Dispose();
+            dataPubContext.Dispose();
+            alarmSubSocket.Dispose();
+            alarmSubContext.Dispose();
         }
 
         public bool IsSensorWorking()
         {
-            return SDataCollector.GetState();
+            return sDataCollector.GetState();
         }
-
 
         public void SensorReset()
         {
-            SDataCollector.Dispose();
-            SDataCollector = SensorDataController.CreateInstance();
-        }
-
-        protected void CreatePublisher()
-        {
-            Context = new ZContext();
-            PublisherSocket = new ZSocket(Context, ZSocketType.PUB);
-            PublisherSocket.Bind("tcp://" + Properties.Settings.Default.IpAddress + ":" + Properties.Settings.Default.Port);
-            
+            sDataCollector = SensorDataController.CreateInstance();
+            sDataCollector.Dispose();   
         }
 
         public void ResetPublisher()
@@ -103,14 +139,15 @@ namespace ApplicationHub
 
         protected virtual void Dispose(bool Disposing)
         {
-            if (!Disposed)
+            if (!disposed)
             {
                 if (Disposing)
                 {
-                    Context.Dispose();
-                    PublisherSocket.Dispose();
-                    SDataCollector.Dispose();
-
+                    dataPubContext.Dispose();
+                    dataPubSocket.Dispose();
+                    alarmSubContext.Dispose();
+                    alarmSubSocket.Dispose();
+                    sDataCollector.Dispose();
                    /*_ZFrame.Close();
                    _ZFrame.Dispose();
                    XmlWriter.Close();
@@ -120,7 +157,7 @@ namespace ApplicationHub
                 }
 
             }
-            Disposed = true;
+            disposed = true;
         }
         public void Dispose()
         {
