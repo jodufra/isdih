@@ -180,6 +180,7 @@
     <Content Include="Content\import\vendors\bootgrid\jquery.bootgrid.min.js" />
     <Content Include="Content\import\vendors\bootgrid\original\jquery.bootgrid.js" />
     <Content Include="Content\import\vendors\bootgrid\original\jquery.bootgrid.min.js" />
+    <Content Include="Content\import\vendors\bootstrap-datetimepicker\angular-bootstrap-datetimepicker.js" />
     <Content Include="Content\import\vendors\bootstrap-datetimepicker\bootstrap-datetimepicker.js" />
     <Content Include="Content\import\vendors\bootstrap-datetimepicker\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\import\vendors\bootstrap-growl\bootstrap-growl.js" />

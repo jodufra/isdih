@@ -10,12 +10,6 @@ namespace ApplicationWebClient.Controllers.Api
 {
     public class RecordsController : ApiController
     {
-        private readonly Dictionary<String, DIS.QueryGroupFunction> options = new Dictionary<string, DIS.QueryGroupFunction>{ 
-            {"avg", DIS.QueryGroupFunction.Average},
-            {"min", DIS.QueryGroupFunction.Average},
-            {"max", DIS.QueryGroupFunction.Average} 
-        };
-
         [HttpGet, Route("api/records")]
         public HttpResponseMessage Get([FromUri]string[] channels, [FromUri]char span)
         {
@@ -36,9 +30,13 @@ namespace ApplicationWebClient.Controllers.Api
         [HttpGet, Route("api/records")]
         public HttpResponseMessage Get([FromUri]String minDate, [FromUri]String maxDate, [FromUri]String group)
         {
-            var dateMin = DateTime.ParseExact(minDate, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-            var dateMax = DateTime.ParseExact(maxDate, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-
+            var dateMin = DateTime.ParseExact(minDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            var dateMax = DateTime.ParseExact(maxDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            Dictionary<String, DIS.QueryGroupFunction> options = new Dictionary<string, DIS.QueryGroupFunction>{ 
+                {"avg", DIS.QueryGroupFunction.Average},
+                {"min", DIS.QueryGroupFunction.Min},
+                {"max", DIS.QueryGroupFunction.Max} 
+            };
             try
             {
                 using (var svc = new DIS.DataIntegrationServiceClient())

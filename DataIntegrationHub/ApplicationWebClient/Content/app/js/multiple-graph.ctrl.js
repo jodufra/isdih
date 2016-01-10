@@ -13,10 +13,6 @@
     $scope.dataH = [];
 
     $scope.init = function (dateMin, dateMax, group) {
-        $scope.minDate = new Date();
-        $scope.minDate.setDate($scope.minDate.getDate() - 1);
-        $scope.maxDate = new Date();
-
         if (dateMin != null) {
             $scope.minDate = dateMin;
         }
@@ -28,8 +24,10 @@
         }
         $scope.load()
     }
-
+    
     $scope.load = function () {
+        $scope.minDate = $("#datetimepickerstart").val();
+        $scope.maxDate = $("#datetimepickerend").val();
         $scope.isLoading = true;
         $http.get(API_URL + "/records/?" + $.param({ minDate: parseDate($scope.minDate), maxDate: parseDate($scope.maxDate), group: $scope.group })).success(function (data) {
             $scope.updateGraph(data);
@@ -65,7 +63,6 @@
 
         $(element).width($(wrapper).width());
 
-
         var graph = [];
         var minDate = new Date('31/12/2100');
         var maxDate = new Date('1/1/0001');
@@ -83,7 +80,7 @@
         var plot = $.plot($(element), [graph], {
             series: {
                 label: "", lines: { show: true, lineWidth: 1, fill: 0.6 },
-                color: $scope.channel == "T" ? '#E89623' : $scope.channel == "P" ? '#8BC540' : '#1C499C', shadowSize: 0,
+                color: channel == "T" ? '#E89623' : channel == "P" ? '#8BC540' : '#1C499C', shadowSize: 0,
             },
             yaxis: {
                 min: minValue, max: maxValue, tickColor: '#aaa', font: { lineHeight: 13, style: "normal", color: "#454545", },
@@ -95,32 +92,19 @@
                 shadowSize: 0, min: minDate, max: maxDate
             },
             grid: { borderWidth: 0, borderColor: '#eee', labelMargin: 5, hoverable: true, clickable: true, mouseActiveRadius: 6, },
-            legend: { container: '.flc-dynamic', backgroundOpacity: 0.5, noColumns: 0, backgroundColor: $scope.channel == "T" ? '#E89623' : $scope.channel == "P" ? '#8BC540' : '#1C499C', lineWidth: 0 }
+            legend: { container: '.flc-dynamic', backgroundOpacity: 0.5, noColumns: 0, backgroundColor: channel == "T" ? '#E89623' : channel == "P" ? '#8BC540' : '#1C499C', lineWidth: 0 }
         });
 
         var tipname = element + "-tooltip";
         $("<div id='" + tipname + "'></div>").css({
             position: "absolute",
             display: "none",
-            border: "1px solid " + $scope.channel == "T" ? '#E89623' : $scope.channel == "P" ? '#8BC540' : '#1C499C',
+            border: "1px solid " + channel == "T" ? '#E89623' : channel == "P" ? '#8BC540' : '#1C499C',
             padding: "2px",
-            "background-color": $scope.channel == "T" ? '#E89623' : $scope.channel == "P" ? '#8BC540' : '#1C499C',
+            "background-color": channel == "T" ? '#E89623' : channel == "P" ? '#8BC540' : '#1C499C',
             opacity: 0.80
         }).appendTo("body");
 
         plot.draw();
-    }
-
-    function parseDate(date) {
-        if (date == null) return "";
-        var day = date.getDay() + 1;        // yields day
-        var month = date.getMonth() + 1;    // yields month
-        var year = date.getFullYear();  // yields year
-        var hour = date.getHours();     // yields hours 
-        var minute = date.getMinutes(); // yields minutes
-        var second = date.getSeconds(); // yields seconds
-
-        return (day < 10 ? "0" : "") + day + "/" + (month < 10 ? "0" : "") + month + "/" + year + " " + (hour < 10 ? "0" : "") + hour + ':' + (minute < 10 ? "0" : "") + minute + ':' + (second < 10 ? "0" : "") + second;
-
     }
 }]);

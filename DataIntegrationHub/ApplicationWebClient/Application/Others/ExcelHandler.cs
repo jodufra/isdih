@@ -18,6 +18,10 @@ namespace ApplicationWebClient.Application.Others
         {
             List<Record> lrecords = records.ToList();
             ExcelPackage excel = new ExcelPackage();
+            var hasTemp = channels.Contains("T");
+            var hasPres = channels.Contains("P");
+            var hasHumi = channels.Contains("H");
+
 
             #region Content
             var ws = excel.Workbook.Worksheets.Add("Content");
@@ -44,7 +48,7 @@ namespace ApplicationWebClient.Application.Others
 
             int row = 0;
             ws.Cells["A" + ++row].Value = "Statistics " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString();
-            using (ExcelRange r = ws.Cells["A" + row + ":N" + row])
+            using (ExcelRange r = ws.Cells["A" + row + ":W" + row])
             {
                 r.Merge = true;
                 r.Style.Font.SetFromFont(new Font("Arial", 22, FontStyle.Italic));
@@ -69,17 +73,19 @@ namespace ApplicationWebClient.Application.Others
             int tcount = lrecords.Where(r => r.Channel == "T").Count();
             int pcount = lrecords.Where(r => r.Channel == "P").Count();
             int hcount = lrecords.Where(r => r.Channel == "H").Count();
-            ws.Cells["A" + ++row].Value = "Channel";
-            ws.Cells["B" + row].Value = "Ammount";
-            ws.Cells["A" + ++row].Value = "Temperature";
-            ws.Cells["B" + row].Value = tcount;
-            ws.Cells["A" + ++row].Value = "Pressure";
-            ws.Cells["B" + row].Value = pcount;
-            ws.Cells["A" + ++row].Value = "Humidity";
-            ws.Cells["B" + row].Value = hcount;
 
+            ws.Cells["A" + ++row].Value = "Channel";
+            ws.Cells["B" + row].Value = "Value";
+            if (hasTemp) ws.Cells["A" + ++row].Value = "Temperature";
+            if (hasTemp) ws.Cells["B" + row].Value = tcount;
+            if (hasPres) ws.Cells["A" + ++row].Value = "Pressure";
+            if (hasPres) ws.Cells["B" + row].Value = pcount;
+            if (hasHumi) ws.Cells["A" + ++row].Value = "Humidity";
+            if (hasHumi) ws.Cells["B" + row].Value = hcount;
+
+            // Temperature
             row++;
-            ws.Cells["A" + ++row].Value = "Minimum Values";
+            ws.Cells["A" + ++row].Value = "Temperature";
             using (ExcelRange r = ws.Cells["A" + row + ":B" + row])
             {
                 r.Merge = true;
@@ -90,20 +96,23 @@ namespace ApplicationWebClient.Application.Others
                 r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
             }
 
-            float tmin = lrecords.Where(r => r.Channel == "T").Min(r => r.Value);
-            float pmin = lrecords.Where(r => r.Channel == "P").Min(r => r.Value);
-            float hmin = lrecords.Where(r => r.Channel == "H").Min(r => r.Value);
-            ws.Cells["A" + ++row].Value = "Channel";
-            ws.Cells["B" + row].Value = "Minimum";
-            ws.Cells["A" + ++row].Value = "Temperature";
-            ws.Cells["B" + row].Value = tmin;
-            ws.Cells["A" + ++row].Value = "Pressure";
-            ws.Cells["B" + row].Value = pmin;
-            ws.Cells["A" + ++row].Value = "Humidity";
-            ws.Cells["B" + row].Value = hmin;
+            var tmin = lrecords.Where(r => r.Channel == "T").Select(r => (float?)r.Value).Min();
+            var tavg = lrecords.Where(r => r.Channel == "T").Select(r => (float?)r.Value).Average();
+            var tmax = lrecords.Where(r => r.Channel == "T").Select(r => (float?)r.Value).Max();
 
+
+            ws.Cells["A" + ++row].Value = "Temperature";
+            ws.Cells["B" + row].Value = "Value";
+            if (hasTemp) ws.Cells["A" + ++row].Value = "Minimum";
+            if (hasTemp) ws.Cells["B" + row].Value = tmin;
+            if (hasTemp) ws.Cells["A" + ++row].Value = "Average";
+            if (hasTemp) ws.Cells["B" + row].Value = tavg;
+            if (hasTemp) ws.Cells["A" + ++row].Value = "Maximum";
+            if (hasTemp) ws.Cells["B" + row].Value = tmax;
+
+            // Pressure
             row++;
-            ws.Cells["A" + ++row].Value = "Average Values";
+            ws.Cells["A" + ++row].Value = "Pressure";
             using (ExcelRange r = ws.Cells["A" + row + ":B" + row])
             {
                 r.Merge = true;
@@ -114,21 +123,23 @@ namespace ApplicationWebClient.Application.Others
                 r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
             }
 
+            var pmin = lrecords.Where(r => r.Channel == "P").Select(r => (float?)r.Value).Min();
+            var pavg = lrecords.Where(r => r.Channel == "P").Select(r => (float?)r.Value).Average();
+            var pmax = lrecords.Where(r => r.Channel == "P").Select(r => (float?)r.Value).Max();
 
-            float tavg = lrecords.Where(r => r.Channel == "T").Average(r => r.Value);
-            float pavg = lrecords.Where(r => r.Channel == "P").Average(r => r.Value);
-            float havg = lrecords.Where(r => r.Channel == "H").Average(r => r.Value);
-            ws.Cells["A" + ++row].Value = "Channel";
-            ws.Cells["B" + row].Value = "Average";
-            ws.Cells["A" + ++row].Value = "Temperature";
-            ws.Cells["B" + row].Value = tavg;
+
             ws.Cells["A" + ++row].Value = "Pressure";
-            ws.Cells["B" + row].Value = pavg;
-            ws.Cells["A" + ++row].Value = "Humidity";
-            ws.Cells["B" + row].Value = havg;
+            ws.Cells["B" + row].Value = "Value";
+            if (hasPres) ws.Cells["A" + ++row].Value = "Minimum";
+            if (hasPres) ws.Cells["B" + row].Value = pmin;
+            if (hasPres) ws.Cells["A" + ++row].Value = "Average";
+            if (hasPres) ws.Cells["B" + row].Value = pavg;
+            if (hasPres) ws.Cells["A" + ++row].Value = "Maximum";
+            if (hasPres) ws.Cells["B" + row].Value = pmax;
 
+            // Humidity
             row++;
-            ws.Cells["A" + ++row].Value = "Max Values";
+            ws.Cells["A" + ++row].Value = "Humidity";
             using (ExcelRange r = ws.Cells["A" + row + ":B" + row])
             {
                 r.Merge = true;
@@ -139,35 +150,47 @@ namespace ApplicationWebClient.Application.Others
                 r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
             }
 
+            var hmin = lrecords.Where(r => r.Channel == "H").Select(r => (float?)r.Value).Min();
+            var havg = lrecords.Where(r => r.Channel == "H").Select(r => (float?)r.Value).Average();
+            var hmax = lrecords.Where(r => r.Channel == "H").Select(r => (float?)r.Value).Max();
 
-            float tmax = lrecords.Where(r => r.Channel == "T").Max(r => r.Value);
-            float pmax = lrecords.Where(r => r.Channel == "P").Max(r => r.Value);
-            float hmax = lrecords.Where(r => r.Channel == "H").Max(r => r.Value);
-            ws.Cells["A" + ++row].Value = "Channel";
-            ws.Cells["B" + row].Value = "Max";
-            ws.Cells["A" + ++row].Value = "Temperature";
-            ws.Cells["B" + row].Value = tmax;
-            ws.Cells["A" + ++row].Value = "Pressure";
-            ws.Cells["B" + row].Value = pmax;
             ws.Cells["A" + ++row].Value = "Humidity";
-            ws.Cells["B" + row].Value = hmax;
+            ws.Cells["B" + row].Value = "Value";
+            if (hasHumi) ws.Cells["A" + ++row].Value = "Minimum";
+            if (hasHumi) ws.Cells["B" + row].Value = hmin;
+            if (hasHumi) ws.Cells["A" + ++row].Value = "Average";
+            if (hasHumi) ws.Cells["B" + row].Value = havg;
+            if (hasHumi) ws.Cells["A" + ++row].Value = "Maximum";
+            if (hasHumi) ws.Cells["B" + row].Value = hmax;
             #endregion
 
             var pieChart = ws.Drawings.AddChart("crtRecordsCount", eChartType.PieExploded3D) as ExcelPieChart;
             //Set top left corner to row 1 column 2
-            pieChart.SetPosition(1, 0, 2, 0);
-            pieChart.SetSize(400, 400);
-            pieChart.Series.Add(ExcelRange.GetAddress(4, 2, 6, 2), ExcelRange.GetAddress(4, 1, 6, 1));
+            pieChart.SetPosition(2, 0, 3, 0);
+            pieChart.SetSize(600, 400);
+            pieChart.Series.Add(ExcelRange.GetAddress(4, 2, (hasTemp ? 2 : 0) + (hasPres ? 2 : 0) + (hasHumi ? 2 : 0), 2), ExcelRange.GetAddress(4, 1, 6, 1));
             pieChart.Title.Text = "Records Count";
             //Set datalabels and remove the legend
             pieChart.DataLabel.ShowCategory = true;
-            pieChart.DataLabel.ShowPercent = true;
+            pieChart.DataLabel.ShowPercent = false;
             pieChart.DataLabel.ShowLeaderLines = true;
             pieChart.Legend.Remove();
 
-            using (ExcelRange r = ws.Cells["A1:N" + row])
+            if (hasTemp)
             {
-                r.Style.WrapText = false;
+                var tbarChart = ws.Drawings.AddChart("crtTemperatureInfo", eChartType.BarClustered) as ExcelBarChart;
+                //Set top left corner to row 1 column 2
+                tbarChart.SetPosition(10, 0, 3, 0);
+                tbarChart.SetSize(600, 400);
+                tbarChart.Series.Add(ExcelRange.GetAddress(10, 2, 10, 2), ExcelRange.GetAddress(10, 1, 10, 1));
+                tbarChart.Series.Add(ExcelRange.GetAddress(16, 2, 16, 2), ExcelRange.GetAddress(16, 1, 16, 1));
+                tbarChart.Series.Add(ExcelRange.GetAddress(22, 2, 22, 2), ExcelRange.GetAddress(22, 1, 22, 1));
+                tbarChart.Title.Text = "Temperature Statistics";
+                //Set datalabels and remove the legend
+                tbarChart.DataLabel.ShowCategory = true;
+                tbarChart.DataLabel.ShowPercent = false;
+                tbarChart.DataLabel.ShowLeaderLines = true;
+                tbarChart.Legend.Remove();
             }
             #endregion
 

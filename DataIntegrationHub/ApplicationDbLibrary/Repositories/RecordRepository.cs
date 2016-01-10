@@ -133,9 +133,9 @@ namespace ApplicationDbLibrary.Repositories
         {
             var query = (from p in db.Records where p.DateCreated >= dateMin && p.DateCreated <= dateMax select p).ToList();
             var interval = dateMax - dateMin;
-            var days = interval.Days;
-            var hours = interval.Hours;
-            var minutes = interval.Minutes;
+            var days = interval.TotalDays;
+            var hours = interval.TotalHours;
+            var minutes = interval.TotalMinutes;
 
             IEnumerable<RecordStatistic> qrs;
             if (days > 365)

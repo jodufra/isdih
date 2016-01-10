@@ -21,6 +21,32 @@ function parseDateToString(str) {
     return str.getDate() + "/" + (str.getMonth() + 1) + "/" + str.getFullYear();
 }
 
+function parseDate(date) {
+    var pieces = date.split(" ");
+    var datepieces = pieces[0].split("-");
+    var timepieces = pieces[1].split(":");
+    return datepieces[0] + datepieces[1] + datepieces[2] + timepieces[0] + timepieces[1] + "00";
+}
+
+function parseJavascriptDate(date) {
+    if (date == null) return "";
+    var day = date.getDate();        // yields day
+    var month = date.getMonth() + 1;    // yields month
+    var year = date.getFullYear();  // yields year
+    var hour = date.getHours();     // yields hours 
+    var minute = date.getMinutes(); // yields minutes
+    var second = date.getSeconds(); // yields seconds
+    return year + ((month < 10 ? "0" : "") + month) + ((day < 10 ? "0" : "") + day) + ((hour < 10 ? "0" : "") + hour) + ((minute < 10 ? "0" : "") + minute) + ((second < 10 ? "0" : "") + second);
+
+}
+
+function parseServerDate(date) {
+    var pieces = date.indexOf("T") > -1 ? date.split("T") : date.split(" ");
+    var datepieces = pieces[0].split("-");
+    var timepieces = pieces[1].split(":");
+    return new Date(parseInt(datepieces[0]), parseInt(datepieces[1]), parseInt(datepieces[2]), parseInt(timepieces[0]), parseInt(timepieces[1]), parseInt(timepieces[2]));
+}
+
 /*****************************************************************************************************/
 /******************************************* Plugins *************************************************/
 /*****************************************************************************************************/
