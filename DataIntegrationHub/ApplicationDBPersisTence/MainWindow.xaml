@@ -12,7 +12,7 @@
             <Label Content="Hub Connection:" HorizontalAlignment="Left" Margin="12,104,0,0" VerticalAlignment="Top" Height="26" Width="98"/>
             <Label Name="statusLb" Content="Stopped" HorizontalAlignment="Left" Margin="48,178,0,0" VerticalAlignment="Top" Height="26" Width="54"/>
             <Button x:Name="btnStartStop" Content="Start" HorizontalAlignment="Left" Margin="14,162,0,0" VerticalAlignment="Top" Width="76" Height="20" Click="btnStartStop_Click"/>
-            <Button Name="openStatFolderBtn" Content="Update Statistics And Open Folder" HorizontalAlignment="Left" Margin="14,204,0,0" VerticalAlignment="Top" Width="208" Height="20" Click="openStatFolderBtn_Click"/>
+            <Button Name="openStatFolderBtn" Content="Open Statistics Folder" HorizontalAlignment="Left" Margin="14,204,0,0" VerticalAlignment="Top" Width="208" Height="20" Click="openStatFolderBtn_Click"/>
             <Label Content="Event Log:" HorizontalAlignment="Left" Margin="4,236,0,0" VerticalAlignment="Top" Height="26" Width="64"/>
             <Button Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="137,84,0,0" VerticalAlignment="Top" Width="60" Height="22" IsEnabled="False" Click="saveBtn_Click"/>
             <Button Name="saveHubSettBtn" Content="Save" HorizontalAlignment="Left" Margin="273,130,0,0" VerticalAlignment="Top" Width="60" Height="22" Click="saveHubSettBtn_Click"/>

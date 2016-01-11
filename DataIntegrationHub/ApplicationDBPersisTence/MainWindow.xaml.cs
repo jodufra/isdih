@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -22,6 +23,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using ZeroMQ;
 
@@ -317,10 +319,9 @@ namespace ApplicationDBPersisTence
         {
             //Init Scheduler
             var dateNow = DateTime.Now;
-            var date = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day, dateNow.Hour, dateNow.Minute, 0);
-            var nextDateValue = date.AddMinutes(1);
+            var date = new DateTime(dateNow.Year, dateNow.Month, dateNow.Day + 1, 0, 1, 0);
             filesToUpdateLst = new List<string>();
-            executeAt(nextDateValue);
+            executeAt(date);
         }
 
         private void executeAt(DateTime date)
@@ -346,64 +347,58 @@ namespace ApplicationDBPersisTence
 
             Task.Delay(ts).ContinueWith((x) =>
             {
-                UpdateAllStatistics(); // Update Statistics
-                //next day
-                executeAt(date.AddMinutes(1));
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    logLb.Items.Add("Saving statistics of " + DateTime.Now.AddDays(-1).ToShortDateString());
+                }));
+                UpdateAllStatistics();
+                executeAt(new DateTime(dateNow.Year, dateNow.Month, dateNow.Day + 1, 0, 1, 0));
             }, cts.Token);
         }
 
         private void UpdateAllStatistics()
         {
-            if (ValidateFolderStructure())
+            if (ValidateFolderStructure() && ValidateFiles())
             {
-                if (ValidateFiles())
-                { //validate with .xsd
-                    UpdateFiles();
-                }
-                //update main year xml
-                //update main month xml
-                //update day file xml
+                UpdateFiles();
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    logLb.Items.Add("Statistics were saved");
+                }));
             }
         }
 
         private void UpdateFiles()
         {
-            int count;
-
             var options = new Dictionary<FilterOptionRecord, Object>();
-            if (!String.IsNullOrEmpty(Properties.Settings.Default.LastRecordId))
-            {
-               // options.Add(FilterOptionRecord.IdRecordMin, Convert.ToInt32(Properties.Settings.Default.LastRecordId));
 
-            }
-
+            int count;
             var now = DateTime.Now;
-            var min = new DateTime(now.Year, now.Month, now.Day - 1);
-            var max = new DateTime(now.Year, now.Month, now.Day).AddTicks(-1);
-
-
-
-            options.Add(FilterOptionRecord.DateCreatedMin, min);
-            options.Add(FilterOptionRecord.DateCreatedMax, max);
-            
+            options.Add(FilterOptionRecord.DateCreatedMin, new DateTime(now.Year, now.Month, now.Day - 1));
+            options.Add(FilterOptionRecord.DateCreatedMax, new DateTime(now.Year, now.Month, now.Day).AddTicks(-1));
             List<Record> lst = RecordRepository.Get(null, null, null, out count, OrderOptionRecord.DateCreatedAsc, options);
 
-            var avg = lst.GroupBy(p => p.Channel).Average(p => p.Average(c => c.Value));
-            
+            var min = lst.GroupBy(p => p.Channel).Select(p => new { Channel = p.Key, Value = p.Min(c => (float?)c.Value) });
+            var avg = lst.GroupBy(p => p.Channel).Select(p => new { Channel = p.Key, Value = p.Average(c => (float?)c.Value) });
+            var max = lst.GroupBy(p => p.Channel).Select(p => new { Channel = p.Key, Value = p.Max(c => (float?)c.Value) });
+
             foreach (var file in filesToUpdateLst)
             {
                 XmlDocument doc = new XmlDocument();
                 doc.Load(file);
                 XmlNodeList statis = doc.SelectNodes("/statistics");
-                XmlElement statistic = doc.CreateElement("statistic");
-                statistic.SetAttribute("date", DateTime.Now.ToString());
-                statistic.SetAttribute("channel", "T");
-                statistic.SetAttribute("avg", "34.2");
-                statistic.SetAttribute("min", "12.5");
-                statistic.SetAttribute("max", "55.7");
-                statis[0].AppendChild(statistic);
-                doc.Save(file);
 
+                foreach (var channel in avg.Where(p => p.Value.HasValue).Select(p => p.Channel))
+                {
+                    XmlElement statistic = doc.CreateElement("statistic");
+                    statistic.SetAttribute("date", new DateTime(now.Year, now.Month, now.Day - 1).ToShortDateString());
+                    statistic.SetAttribute("channel", channel);
+                    statistic.SetAttribute("min", min.Where(p => p.Channel == channel).Select(p => p.Value.Value).First().ToString());
+                    statistic.SetAttribute("avg", avg.Where(p => p.Channel == channel).Select(p => p.Value.Value).First().ToString());
+                    statistic.SetAttribute("max", max.Where(p => p.Channel == channel).Select(p => p.Value.Value).First().ToString());
+                    statis[0].AppendChild(statistic);
+                }
+                doc.Save(file);
             }
         }
 
@@ -411,15 +406,21 @@ namespace ApplicationDBPersisTence
         {
             try
             {
+                if (!ValidateFile(aysPath))
+                    throw new Exception();
+
+                if (!ValidateFile(amsPath))
+                    throw new Exception();
+
+                if (!ValidateFile(adsPath))
+                    throw new Exception();
+
                 //all_year_stats.xml
                 //string aysPath = @System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, STATISTICS, DateTime.Now.Year.ToString() + "\\all_" + DateTime.Now.Year.ToString() + "_stats.xml");
-                if (!File.Exists(aysPath)) CreateXmlDoc(aysPath);
                 //all_month_stats.xml
                 //string amsPath = @System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, STATISTICS, DateTime.Now.Year.ToString() + "\\" + DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture) + "\\all_" + DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture) + "_stats.xml");
-                if (!File.Exists(amsPath)) CreateXmlDoc(amsPath);
                 //day_dayNum_stats.xml
                 //string adsPath = @System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, STATISTICS, DateTime.Now.Year.ToString() + "\\" + DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture) + "\\day_" + DateTime.Now.Day + "_stats.xml");
-                if (!File.Exists(adsPath)) CreateXmlDoc(adsPath);
 
                 return true;
             }
@@ -428,6 +429,33 @@ namespace ApplicationDBPersisTence
                 logLb.Items.Add("Unable to Create or Access The Statistics Files!");
                 return false;
             }
+        }
+
+        private bool ValidateFile(String filename)
+        {
+            if (!File.Exists(filename)) CreateXmlDoc(filename);
+            var result = true;
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(filename);
+                Assembly myAssembly = Assembly.GetExecutingAssembly();
+                using (Stream schemaStream = myAssembly.GetManifestResourceStream("ApplicationDBPersisTence.statistics.xsd"))
+                {
+                    XmlSchema schema = XmlSchema.Read(schemaStream, null);
+                    doc.Schemas.Add(schema);
+                }
+                doc.Validate(delegate(Object sender, ValidationEventArgs args)
+                {
+                    logLb.Items.Add(string.Format((args.Severity == XmlSeverityType.Error ? "Error" : "Warning") + ": {0}", args.Message));
+                    result = false;
+                });
+            }
+            catch
+            {
+                result = false;
+            }
+            return result;
         }
 
         private void CreateXmlDoc(string path)
